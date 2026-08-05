@@ -1,6 +1,18 @@
 import { z } from 'zod';
 
 /**
+ * Content model for AI 빌더 그룹 랜딩 페이지, per
+ * `project-docs/기획안_확정본_AI빌더그룹_랜딩페이지_v1.0.md` §5.
+ *
+ * Four content types: builders, projects, posts (blog), education.
+ *
+ * `inquiries` is deliberately NOT modeled here. The contact form is a
+ * plug(pluuug) embed, and plug's own CRM owns storage and the lead list —
+ * see `wiki/decisions/ADR-0004-plug-form-integration.md`. Do not add an
+ * inquiries schema without first revisiting that ADR.
+ */
+
+/**
  * Content lifecycle. The admin app moves a post through these states;
  * the web app only ever renders `published`.
  */
@@ -191,4 +203,94 @@ export interface Post extends PostFrontmatter {
   /** Absolute path on disk. Empty when the post came from Supabase. */
   filePath: string;
   readingTimeMinutes: number;
+}
+
+/**
+ * builders — 빌더(팀원) 프로필. §5 `builders` 테이블.
+ *
+ * No publish toggle: §6 lists only registration/edit/reorder for builders,
+ * not a visibility toggle like projects have.
+ */
+export const BuilderFrontmatterSchema = z.object({
+  name: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  /** e.g. "바이브코딩 개발자" */
+  title: z.string().min(1),
+  bio: z.string().default(''),
+  profileImage: ImageSchema.optional(),
+  /** 수료 과정 — 4단 신뢰 체인 중 "교육" 연결점. */
+  courseName: z.string().default(''),
+  /** 노출 순서. 낮을수록 먼저 노출. */
+  order: z.number().int().default(0),
+  /** 빌더 상세 페이지도 개별 URL을 가지므로(§4) 메타 태그가 필요하다. */
+  seo: SeoSchema.prefault({}),
+});
+export type BuilderFrontmatter = z.infer<typeof BuilderFrontmatterSchema>;
+export type BuilderFrontmatterInput = z.input<typeof BuilderFrontmatterSchema>;
+
+export interface Builder extends BuilderFrontmatter {
+  filePath: string;
+}
+
+/**
+ * projects — 빌더의 포트폴리오 프로젝트. §5 `projects` 테이블.
+ *
+ * `builderId` is a slug reference, not a uuid FK — file-based content has no
+ * database, so the builder's slug doubles as its stable identifier
+ * (see ADR-0001).
+ */
+export const ProjectFrontmatterSchema = z.object({
+  builderId: z.string().min(1, 'projects must reference a builder slug'),
+  title: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  problem: z.string().default(''),
+  solution: z.string().default(''),
+  result: z.string().default(''),
+  category: z.string().default('general'),
+  cover: ImageSchema.optional(),
+  liveUrl: z.string().url().optional(),
+  /** Gate for §0-2's unresolved question: is the live link OK to publish? */
+  showLiveUrl: z.boolean().default(false),
+  isPublished: z.boolean().default(false),
+  createdAt: z.string(),
+  seo: SeoSchema.prefault({}),
+});
+export type ProjectFrontmatter = z.infer<typeof ProjectFrontmatterSchema>;
+export type ProjectFrontmatterInput = z.input<typeof ProjectFrontmatterSchema>;
+
+export interface Project extends ProjectFrontmatter {
+  filePath: string;
+}
+
+/**
+ * education — 교육·커뮤니티 신뢰 신호. §5 `education / community` 테이블.
+ *
+ * No slug: these render as list items inside the 교육·커뮤니티 섹션, not as
+ * individually addressable pages (§4 IA).
+ */
+export const EducationType = z.enum(['course', 'seminar', 'study']);
+export type EducationType = z.infer<typeof EducationType>;
+
+export const EducationFrontmatterSchema = z.object({
+  type: EducationType,
+  title: z.string().min(1),
+  description: z.string().default(''),
+  /** 누적 회차·기수·인원 등 신뢰 신호가 되는 숫자. */
+  countValue: z.number().int().nonnegative().default(0),
+  /** 무료 에셋 목업 허용 (대표님 지침, §8-2). */
+  image: ImageSchema.optional(),
+});
+export type EducationFrontmatter = z.infer<typeof EducationFrontmatterSchema>;
+export type EducationFrontmatterInput = z.input<typeof EducationFrontmatterSchema>;
+
+export interface Education extends EducationFrontmatter {
+  filePath: string;
 }

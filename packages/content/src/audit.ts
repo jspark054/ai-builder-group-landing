@@ -1,4 +1,4 @@
-import type { Post } from './schema.ts';
+import type { Builder, Education, Post, Project } from './schema.ts';
 
 export type Severity = 'error' | 'warn' | 'info';
 
@@ -18,6 +18,31 @@ export interface AuditResult {
 }
 
 const MIN_BODY_CHARS = 600;
+
+/** Same scoring formula for every content type so review verdicts stay comparable. */
+function toAuditResult(slug: string, issues: AuditIssue[]): AuditResult {
+  const errors = issues.filter((i) => i.severity === 'error').length;
+  const warnings = issues.filter((i) => i.severity === 'warn').length;
+  const score = Math.max(0, 100 - errors * 20 - warnings * 7);
+  return { slug, score, issues, publishable: errors === 0 };
+}
+
+/** Shared image-provenance checks (hard rule 1). Reused across every content type. */
+function auditImage(
+  add: (field: string, severity: Severity, lane: AuditIssue['lane'], message: string) => void,
+  field: string,
+  image: Post['cover'],
+) {
+  if (!image) return;
+  if (!image.alt.trim()) add(`${field}.alt`, 'error', 'images', `${field} has no alt text.`);
+  if (image.source === 'none') add(`${field}.source`, 'error', 'images', `${field} provenance is unset.`);
+  if (image.source === 'codex-imagegen' && !image.origin) {
+    add(`${field}.origin`, 'warn', 'images', `Codex-generated ${field} is missing its prompt in \`origin\`.`);
+  }
+  if (image.source === 'web-search' && !image.license) {
+    add(`${field}.license`, 'error', 'images', `Web-sourced ${field} has no license recorded.`);
+  }
+}
 
 /**
  * Deterministic pre-publish audit. The admin review screen and the
@@ -94,16 +119,7 @@ export function auditPost(post: Post): AuditResult {
   if (!post.cover) {
     add('cover', 'info', 'images', 'No cover image. Run `pnpm imagegen` (Codex) or attach one manually.');
   } else {
-    if (!post.cover.alt.trim()) add('cover.alt', 'error', 'images', 'Cover image has no alt text.');
-    if (post.cover.source === 'none') {
-      add('cover.source', 'error', 'images', 'Cover image provenance is unset.');
-    }
-    if (post.cover.source === 'codex-imagegen' && !post.cover.origin) {
-      add('cover.origin', 'warn', 'images', 'Codex-generated image is missing its prompt in `origin`.');
-    }
-    if (post.cover.source === 'web-search' && !post.cover.license) {
-      add('cover.license', 'error', 'images', 'Web-sourced image has no license recorded.');
-    }
+    auditImage(add, 'cover', post.cover);
   }
 
   // ── Publish gate ───────────────────────────────────────────
@@ -111,9 +127,94 @@ export function auditPost(post: Post): AuditResult {
     add('publishedAt', 'error', 'editorial', 'Published post has no publish date.');
   }
 
-  const errors = issues.filter((i) => i.severity === 'error').length;
-  const warnings = issues.filter((i) => i.severity === 'warn').length;
-  const score = Math.max(0, 100 - errors * 20 - warnings * 7);
+  return toAuditResult(post.slug, issues);
+}
 
-  return { slug: post.slug, score, issues, publishable: errors === 0 };
+/**
+ * Deterministic pre-publish audit for a builder profile.
+ * No `status` field exists for builders (§6) — visibility is all-or-nothing
+ * once a file exists, so there is no publish gate here, only quality checks.
+ */
+export function auditBuilder(builder: Builder): AuditResult {
+  const issues: AuditIssue[] = [];
+  const add = (field: string, severity: Severity, lane: AuditIssue['lane'], message: string) =>
+    issues.push({ field, severity, lane, message });
+
+  if (!builder.bio.trim()) add('bio', 'warn', 'editorial', 'Bio is empty — this is the builder\'s trust signal.');
+  if (!builder.courseName.trim()) {
+    add('courseName', 'info', 'editorial', 'No course name set — weakens the 교육 link in the trust chain.');
+  }
+
+  if (!builder.profileImage) {
+    add('profileImage', 'warn', 'images', 'No profile image. Run `pnpm imagegen` (Codex) or attach one manually.');
+  } else {
+    auditImage(add, 'profileImage', builder.profileImage);
+  }
+
+  const metaDescription = builder.seo.description ?? builder.bio;
+  if (!metaDescription) add('seo.description', 'warn', 'seo', 'Meta description is missing.');
+  else if (metaDescription.length > 160) {
+    add('seo.description', 'warn', 'seo', `Meta description is ${metaDescription.length} chars (>160).`);
+  }
+
+  return toAuditResult(builder.slug, issues);
+}
+
+/**
+ * Deterministic pre-publish audit for a portfolio project.
+ * The publish gate mirrors hard rule 2: `isPublished` requires the
+ * evidence fields (problem/solution/result) that make the claim checkable.
+ */
+export function auditProject(project: Project): AuditResult {
+  const issues: AuditIssue[] = [];
+  const add = (field: string, severity: Severity, lane: AuditIssue['lane'], message: string) =>
+    issues.push({ field, severity, lane, message });
+
+  if (!project.problem.trim()) add('problem', 'error', 'editorial', 'Problem statement is empty.');
+  if (!project.solution.trim()) add('solution', 'error', 'editorial', 'Solution statement is empty.');
+  if (!project.result.trim()) add('result', 'error', 'editorial', 'Result statement is empty.');
+
+  if (!project.cover) {
+    add('cover', 'info', 'images', 'No cover image. Run `pnpm imagegen` (Codex) or attach one manually.');
+  } else {
+    auditImage(add, 'cover', project.cover);
+  }
+
+  // §0-2: live-link exposure is still an unresolved policy question — a
+  // link can exist without being shown, but it can't be shown without existing.
+  if (project.showLiveUrl && !project.liveUrl) {
+    add('showLiveUrl', 'error', 'editorial', '`showLiveUrl` is on but no `liveUrl` is set.');
+  }
+
+  if (project.isPublished) {
+    if (!project.problem.trim() || !project.solution.trim() || !project.result.trim()) {
+      add('isPublished', 'error', 'editorial', 'Published project is missing problem/solution/result evidence.');
+    }
+  }
+
+  return toAuditResult(project.slug, issues);
+}
+
+/**
+ * Deterministic pre-publish audit for an education/community trust signal.
+ * Uses `type` as the audit key since education entries have no slug (§4 IA
+ * — they render inline, not as individually addressable pages).
+ */
+export function auditEducation(education: Education): AuditResult {
+  const issues: AuditIssue[] = [];
+  const add = (field: string, severity: Severity, lane: AuditIssue['lane'], message: string) =>
+    issues.push({ field, severity, lane, message });
+
+  if (!education.description.trim()) add('description', 'warn', 'editorial', 'Description is empty.');
+  if (education.countValue <= 0) {
+    add('countValue', 'info', 'editorial', 'Count value is 0 — this trust signal will not be very persuasive.');
+  }
+
+  if (!education.image) {
+    add('image', 'info', 'images', 'No image. Free-asset mockups are allowed for education entries (§8-2).');
+  } else {
+    auditImage(add, 'image', education.image);
+  }
+
+  return toAuditResult(`education:${education.type}:${education.title}`, issues);
 }
