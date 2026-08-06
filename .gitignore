@@ -31,3 +31,6 @@ wiki/memory/short-term/*.local.md
 
 # Generated images land in the repo, but codex scratch does not
 .codex-tmp/
+
+# 개인 작업 로그 — 공유하지 않습니다
+project-docs/devlog.md
