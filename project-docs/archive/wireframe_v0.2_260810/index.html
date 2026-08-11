@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>홈 — AI 빌더 그룹 (와이어프레임 v0.2)</title>
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+
+<div class="wf-banner"><b>와이어프레임 v0.2</b> · 구조·비율 확인용 · 색/타이포/카피는 디자인 단계 확정 · <a href="cover.html" style="text-decoration:underline; opacity:.85;">목차로</a></div>
+
+<header class="gnb">
+  <div class="gnb-inner">
+    <a href="index.html" class="logo">로고</a>
+    <nav>
+      <a href="portfolio-category.html">포트폴리오</a>
+      <a href="builders.html">빌더</a>
+      <a href="courses.html">교육</a>
+      <a href="process.html">일하는 방식</a>
+      <a href="insights.html">인사이트</a>
+      <a href="contact.html">문의</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 01 히어로 -->
+<section style="padding:0">
+  <div style="position:relative; min-height:600px; display:flex; align-items:center; background:var(--fill);">
+    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--ink-3); font-size:13px;">
+      배경 영상 영역 (유튜브 임베드 · 5MB 이하만 자체 로딩)
+    </div>
+    <div class="wrap" style="position:relative;">
+      <div class="sec-label">01 히어로 <span class="note">배경 영상 + pause 컨트롤</span></div>
+      <h1 style="max-width:780px;">AI로 만들고,<br>조직이 보증합니다</h1>
+      <p class="lead" style="margin-bottom:28px;">
+        서브카피 영역. 본사 관계 표기 수위는 FR-1.7 판단 대기 —
+        이 문장만 빠져도 레이아웃은 유지됩니다.
+      </p>
+      <a href="contact.html" class="btn solid">프로젝트 상담하기</a>
+      <div style="position:absolute; right:0; bottom:-40px;">
+        <button class="btn sm" type="button">❙❙ pause</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 문제제기 -->
+<section class="tight">
+  <div class="wrap" style="max-width:760px;">
+    <div class="sec-label">02 문제제기 <span class="note">정적 · 애니메이션 없음</span></div>
+    <h2>맡기기 전에는 구분이 안 됩니다</h2>
+    <p style="font-size:16px;">
+      절제된 한 문단. 사고 사례를 나열하지 않고 "구분이 안 된다" 수준에서 멈춥니다 (FR-1.4).
+      껍데기 랜딩이 포트폴리오로 쓰이는 상황에서 발주자는 진짜와 가짜를 가려낼 방법이 없습니다.
+    </p>
+  </div>
+</section>
+
+<!-- 03 선택 기준 -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-label">03 선택 기준 <span class="note">순차 노출</span></div>
+    <h2>그래서, 이 세 가지를 확인하세요</h2>
+    <p class="lead" style="margin-bottom:36px;">판단 기준을 먼저 드리고, 그 기준으로 저희를 보시게 합니다 (FR-1.5).</p>
+    <div class="grid c3">
+      <div class="compare-col">
+        <div class="sec-label">기준 1</div>
+        <h3>진짜 만들 수 있는가</h3>
+        <p style="font-size:14px; margin:0;">열어서 확인되는 결과물이 있는지</p>
+      </div>
+      <div class="compare-col">
+        <div class="sec-label">기준 2</div>
+        <h3>실력이 어디서 왔는가</h3>
+        <p style="font-size:14px; margin:0;">교육과 실무 투입의 연결고리</p>
+      </div>
+      <div class="compare-col">
+        <div class="sec-label">기준 3</div>
+        <h3>맡기면 어떻게 관리되는가</h3>
+        <p style="font-size:14px; margin:0;">단계별 검수와 컨펌 관문</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 포트폴리오 -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">04 포트폴리오 <span class="note">필터 칩 전환 · 동작</span></div>
+    <h2>만든 것을 먼저 보여드립니다</h2>
+    <p class="lead" style="margin-bottom:26px;">
+      모든 카드는 살아있는 배포 링크를 가집니다. 없으면 게시하지 않습니다 (FR-2.2 · P-D).
+    </p>
+    <p style="font-size:12px; color:var(--ink-3); margin-bottom:26px;">
+      실전·제작물을 구분하지 않는 단일 목록입니다 (FR-2.3). 분류는 카드 태그로만 표기 —
+      물량 기준(&quot;상&quot; 등급 8건)에서 4개 분류로 나누면 FR-2.10의 &quot;분류당 2건 미만이면 합침&quot;에 걸립니다.
+    </p>
+
+    <div class="grid c3">
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">웹서비스</span><span class="tag">커머스</span></div>
+        </div>
+      </a>
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">랜딩</span><span class="tag">교육</span></div>
+        </div>
+      </a>
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">앱</span><span class="tag">로컬</span></div>
+        </div>
+      </a>
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">내부도구</span><span class="tag">B2B</span></div>
+        </div>
+      </a>
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">웹서비스</span><span class="tag">예약</span></div>
+        </div>
+      </a>
+      <a href="portfolio-detail.html" class="card">
+        <div class="ph ph-16x9" style="border:0; border-radius:0;">실화면 캡처 16:9</div>
+        <div class="card-body">
+          <div class="builder-credit"><span class="avatar"></span>빌더 이름</div>
+          <div class="card-title">프로젝트명 ↗</div>
+          <p class="card-desc">한 줄 요약. 무엇을 만들었는지.</p>
+          <div class="tags"><span class="tag">랜딩</span><span class="tag">브랜드</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div style="margin-top:32px; text-align:center;">
+      <a href="portfolio-category.html" class="btn">포트폴리오 전체 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- 05 빌더 -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-label">05 빌더 <span class="note">그리드 확장</span></div>
+    <h2>이걸 만든 사람들</h2>
+    <p class="lead" style="margin-bottom:32px;">
+      결과물을 먼저 보시고 그 다음에 사람을 보시게 합니다 (FR-1.3).
+    </p>
+    <div class="grid c4" id="builder-grid">
+      <a href="builder-detail.html" class="card">
+        <div class="ph ph-3x4" style="border:0; border-radius:0;">프로필 3:4</div>
+        <div class="card-body">
+          <div class="card-title">빌더 이름 ↗</div>
+          <p class="card-desc">한 줄 소개</p>
+          <div class="tags"><span class="tag">웹서비스</span><span class="tag">커머스</span></div>
+        </div>
+      </a>
+      <a href="builder-detail.html" class="card">
+        <div class="ph ph-3x4" style="border:0; border-radius:0;">프로필 3:4</div>
+        <div class="card-body">
+          <div class="card-title">빌더 이름 ↗</div>
+          <p class="card-desc">한 줄 소개</p>
+          <div class="tags"><span class="tag">앱</span><span class="tag">로컬</span></div>
+        </div>
+      </a>
+      <a href="builder-detail.html" class="card">
+        <div class="ph ph-3x4" style="border:0; border-radius:0;">프로필 3:4</div>
+        <div class="card-body">
+          <div class="card-title">빌더 이름 ↗</div>
+          <p class="card-desc">한 줄 소개</p>
+          <div class="tags"><span class="tag">랜딩</span><span class="tag">브랜드</span></div>
+        </div>
+      </a>
+      <a href="builder-detail.html" class="card">
+        <div class="ph ph-3x4" style="border:0; border-radius:0;">프로필 3:4</div>
+        <div class="card-body">
+          <div class="card-title">빌더 이름 ↗</div>
+          <p class="card-desc">한 줄 소개</p>
+          <div class="tags"><span class="tag">내부도구</span><span class="tag">B2B</span></div>
+        </div>
+      </a>
+    </div>
+    <div style="margin-top:28px; text-align:center;">
+      <a href="builders.html" class="btn">빌더 전체 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- 06 교육 · 조직 -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">06 교육 · 조직 <span class="note">가로 흐름 · 카운터 없음</span></div>
+    <h2>실력이 어디서 왔는지</h2>
+    <p class="lead" style="margin-bottom:40px;">
+      상품 소개가 아니라 신뢰 근거로서의 서술입니다. 누적 수치는 실제 값이 있을 때만 씁니다 (FR-3.1 · 3.4).
+    </p>
+    <div class="grid c3">
+      <div>
+        <div class="ph ph-16x9" style="margin-bottom:16px;">교육 이미지</div>
+        <h3>교육</h3>
+        <p style="font-size:14px;">바이브코딩 중심 과정 라인업</p>
+      </div>
+      <div>
+        <div class="ph ph-16x9" style="margin-bottom:16px;">실무 투입 이미지</div>
+        <h3>실무 투입</h3>
+        <p style="font-size:14px;">수료 후 실제 프로젝트 배정</p>
+      </div>
+      <div>
+        <div class="ph ph-16x9" style="margin-bottom:16px;">매니징 이미지</div>
+        <h3>매니징</h3>
+        <p style="font-size:14px;">조직이 관리하고 보증</p>
+      </div>
+    </div>
+    <div style="margin-top:32px;">
+      <a href="courses.html" class="btn">교육 과정 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- 07 일하는 방식 -->
+<section class="alt">
+  <div class="wrap">
+    <div class="sec-label">07 일하는 방식 <span class="note">챕터 스테퍼 · 동작</span></div>
+    <h2>맡기면 이렇게 관리됩니다</h2>
+    <p class="lead" style="margin-bottom:28px;">
+      대표님이 지목한 핵심 차별점. 단계마다 검수보고서와 컨펌이 관문입니다 (FR-4.1 · P-C).
+    </p>
+
+    <div class="stepper-tabs" id="proc-tabs">
+      <button class="chip on" data-step="1" type="button">시작 · 1–3단계</button>
+      <button class="chip" data-step="2" type="button">제작 · 4–6단계</button>
+      <button class="chip" data-step="3" type="button">인계 · 7–8단계</button>
+    </div>
+
+    <div class="stepper-panel on" data-panel="1">
+      <div class="step-row"><div class="step-num">01</div><div class="step-body"><h3>수주 · 채널 개설</h3><p style="font-size:14px; margin:0;">전용 채널을 열고 소통 경로를 고정합니다.</p></div></div>
+      <div class="step-row"><div class="step-num">02</div><div class="step-body"><h3>킥오프 · 계정 수급</h3><p style="font-size:14px; margin:0;">필요한 계정과 자산을 정리합니다.</p><span class="gate">검수보고서 + 컨펌</span></div></div>
+      <div class="step-row"><div class="step-num">03</div><div class="step-body"><h3>기획</h3><p style="font-size:14px; margin:0;">기획안과 PRD로 범위를 고정합니다.</p><span class="gate">검수보고서 + 컨펌</span></div></div>
+    </div>
+    <div class="stepper-panel" data-panel="2">
+      <div class="step-row"><div class="step-num">04</div><div class="step-body"><h3>디자인</h3><p style="font-size:14px; margin:0;">화면 설계와 시안을 확정합니다.</p><span class="gate">검수보고서 + 컨펌</span></div></div>
+      <div class="step-row"><div class="step-num">05</div><div class="step-body"><h3>개발</h3><p style="font-size:14px; margin:0;">확정된 설계대로 구현합니다.</p><span class="gate">검수보고서 + 컨펌</span></div></div>
+      <div class="step-row"><div class="step-num">06</div><div class="step-body"><h3>배포 · SEO</h3><p style="font-size:14px; margin:0;">검색 도구 세팅과 색인까지 확인합니다.</p></div></div>
+    </div>
+    <div class="stepper-panel" data-panel="3">
+      <div class="step-row"><div class="step-num">07</div><div class="step-body"><h3>이관</h3><p style="font-size:14px; margin:0;">계정과 산출물을 넘겨드립니다.</p><span class="gate">검수보고서 + 컨펌</span></div></div>
+      <div class="step-row"><div class="step-num">08</div><div class="step-body"><h3>종료 · 하자보수</h3><p style="font-size:14px; margin:0;">운영 가이드와 함께 마무리합니다.</p></div></div>
+    </div>
+
+    <div style="margin-top:32px;">
+      <a href="process.html" class="btn">일하는 방식 자세히 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- 08 규모 적합성 -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">08 규모 적합성 <span class="note">비교표 · 정적</span></div>
+    <h2>이런 프로젝트에 맞습니다</h2>
+    <p class="lead" style="margin-bottom:32px;">
+      가격은 표기하지 않습니다. 적합성으로 판단하시게 합니다 (FR-1.6).
+    </p>
+    <div class="compare">
+      <div class="compare-col">
+        <h3>저희에게 맞습니다</h3>
+        <ul>
+          <li>규모 조건 항목</li>
+          <li>기간 조건 항목</li>
+          <li>성격 조건 항목</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h3>이런 건 이렇게 연결합니다</h3>
+        <ul>
+          <li>상위 연결처 안내 항목</li>
+          <li>연결 방식 항목 <span class="note">FR-1.7 연동</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 문의 -->
+<section class="alt">
+  <div class="wrap" style="text-align:center;">
+    <div class="sec-label">09 문의 <span class="note">utm_source=home</span></div>
+    <h2>어떤 프로젝트인지 들려주세요</h2>
+    <p class="lead" style="margin:0 auto 28px;">
+      이름 · 연락처 · 한 줄 요청이면 충분합니다.
+    </p>
+    <a href="contact.html" class="btn solid">프로젝트 상담하기</a>
+  </div>
+</section>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-row">
+      <span>회사 정보 영역</span>
+      <span>개인정보 처리방침 <span class="note">FR-5.6 · 문구 대기</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('proc-tabs').addEventListener('click', function (e) {
+  var btn = e.target.closest('.chip');
+  if (!btn) return;
+  this.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+  btn.classList.add('on');
+  var step = btn.dataset.step;
+  document.querySelectorAll('.stepper-panel').forEach(function (p) {
+    p.classList.toggle('on', p.dataset.panel === step);
+  });
+});
+</script>
+
+</body>
+</html>
