@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>와이어프레임 v0.2 — AI 빌더 그룹 랜딩 페이지 (11종)</title>
+<title>와이어프레임 v0.2 — AI 빌더 그룹 랜딩 페이지 (12종)</title>
 <link rel="stylesheet" href="wireframe.css">
 <style>
   .cover-head { padding: 60px 0 40px; }
@@ -31,6 +31,21 @@
     transition: border-color 0.15s, transform 0.15s;
   }
   .screen-row:hover { border-color: var(--ink-3); transform: translateX(2px); }
+
+  /* 범위에서 제외된 화면 — 기록은 남기되 이동은 되지 않는다 */
+  .screen-row.off {
+    background: transparent;
+    border-style: dashed;
+    cursor: default;
+  }
+  .screen-row.off:hover { border-color: var(--line-soft); transform: none; }
+  .screen-row.off .screen-name,
+  .screen-row.off .screen-intent { color: var(--ink-3); }
+
+  /* 범위에는 있으나 아직 화면 파일이 없는 항목 */
+  .screen-row.todo { cursor: default; }
+  .screen-row.todo:hover { border-color: var(--line-soft); transform: none; }
+
   .screen-no { font-size: 13px; color: var(--ink-3); }
   .screen-name { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
   .screen-path { font-size: 12px; color: var(--ink-3); font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
@@ -70,9 +85,9 @@
 
 <div class="wrap cover-head">
   <div class="sec-label">똑똑한개발자 · AI 빌더 그룹 랜딩 페이지</div>
-  <h1 style="max-width:720px;">사용자에게 보여지는<br>화면 11종 와이어프레임</h1>
+  <h1 style="max-width:720px;">사용자에게 보여지는<br>화면 12종 와이어프레임</h1>
   <p class="lead">
-    PRD 기준 프론트 화면 전체입니다. 관리자 화면(FR-7)은 이번 범위에 포함되지 않습니다.
+    PRD 기준 프론트 화면 전체입니다. 관리자 화면(FR-7)은 이번 제출 범위에 포함되지 않습니다.
   </p>
   <dl class="cover-meta">
     <dt>작성</dt><dd>박진선</dd>
@@ -85,10 +100,11 @@
 <section class="tight">
   <div class="wrap">
     <div class="sec-label">화면 목록</div>
-    <h2>11개 화면</h2>
+    <h2>12개 화면</h2>
     <p class="lead" style="margin-bottom:30px;">
       각 항목을 누르면 해당 화면으로 이동합니다. 화면끼리도 서로 연결되어 있어
       카드·버튼·상단 메뉴로 실제처럼 이동해볼 수 있습니다.
+      회사 소개·개인정보처리방침과 범위 제외 항목은 화면이 없어 이동하지 않습니다.
     </p>
 
     <div class="screen-list">
@@ -102,8 +118,18 @@
         <span class="screen-fr">FR-1</span>
       </a>
 
-      <a href="portfolio-category.html" class="screen-row">
+      <div class="screen-row todo">
         <span class="screen-no">02</span>
+        <span>
+          <span class="screen-name">회사 소개</span>
+          <span class="screen-path">/about</span>
+          <div class="screen-intent">8/11 추가 확정 · 구현 단계에서 설계</div>
+        </span>
+        <span class="screen-fr">범위 추가</span>
+      </div>
+
+      <a href="portfolio-category.html" class="screen-row">
+        <span class="screen-no">03</span>
         <span>
           <span class="screen-name">포트폴리오 목록</span>
           <span class="screen-path">/portfolio/:category</span>
@@ -113,7 +139,7 @@
       </a>
 
       <a href="portfolio-detail.html" class="screen-row">
-        <span class="screen-no">03</span>
+        <span class="screen-no">04</span>
         <span>
           <span class="screen-name">프로젝트 상세</span>
           <span class="screen-path">/portfolio/:slug</span>
@@ -123,7 +149,7 @@
       </a>
 
       <a href="builders.html" class="screen-row">
-        <span class="screen-no">04</span>
+        <span class="screen-no">05</span>
         <span>
           <span class="screen-name">빌더 목록</span>
           <span class="screen-path">/builders</span>
@@ -133,7 +159,7 @@
       </a>
 
       <a href="builder-detail.html" class="screen-row">
-        <span class="screen-no">05</span>
+        <span class="screen-no">06</span>
         <span>
           <span class="screen-name">빌더 상세</span>
           <span class="screen-path">/builders/:name</span>
@@ -143,7 +169,7 @@
       </a>
 
       <a href="courses.html" class="screen-row">
-        <span class="screen-no">06</span>
+        <span class="screen-no">07</span>
         <span>
           <span class="screen-name">교육 목록</span>
           <span class="screen-path">/courses</span>
@@ -152,15 +178,16 @@
         <span class="screen-fr">FR-3.3 · FR-6.1</span>
       </a>
 
-      <a href="course-detail.html" class="screen-row">
-        <span class="screen-no">07</span>
+      <div class="screen-row off">
+        <span class="screen-no">—</span>
         <span>
           <span class="screen-name">과정 상세</span>
+          <span class="note">범위 제외</span>
           <span class="screen-path">/courses/:name</span>
-          <div class="screen-intent">이 과정을 거친 빌더로 연결됩니다.</div>
+          <div class="screen-intent">대표 피드백(8/11)으로 범위 제외. 수료 빌더 연결은 교육 목록으로 이관</div>
         </span>
         <span class="screen-fr">FR-3</span>
-      </a>
+      </div>
 
       <a href="process.html" class="screen-row">
         <span class="screen-no">08</span>
@@ -201,6 +228,16 @@
         </span>
         <span class="screen-fr">FR-5</span>
       </a>
+
+      <div class="screen-row todo">
+        <span class="screen-no">12</span>
+        <span>
+          <span class="screen-name">개인정보처리방침</span>
+          <span class="screen-path">/privacy</span>
+          <div class="screen-intent">8/11 추가 확정 · 구현 단계에서 설계</div>
+        </span>
+        <span class="screen-fr">범위 추가</span>
+      </div>
     </div>
   </div>
 </section>
@@ -230,10 +267,11 @@
            레퍼런스 중 미래엔·우리은행·이투스가 같은 방식이었습니다. (P-D)</p>
       </div>
       <div class="kv-item">
-        <h3>분류 필터를 두지 않았습니다</h3>
-        <p>물량 최소 기준이 &quot;상&quot; 등급 8건인데 4개 분류로 나누면 분류당 2건입니다.
-           FR-2.10의 &quot;분류당 2건 미만이면 합침&quot;에 걸리므로 단일 목록으로 가고,
-           분류 축은 카드 태그와 경로로만 유지합니다. 물량 확보 후 재검토 가능합니다.</p>
+        <h3>포트폴리오 필터 — 카드 태그·경로에서 화면 필터로 확장 (8/11)</h3>
+        <p>분류 축 자체는 FR-2.10에서 이미 확정돼 있었습니다(주 분류 = 서비스 특성, 보조 = 산업 태그).
+           다만 상 등급 8건 기준으로는 분류당 2건이라 화면 필터를 두지 않고 카드 태그와 경로로만 유지했습니다.
+           실제 프로젝트 4건이 추가되며 분류당 3건이 되어 FR-2.10의 합침 조건을 벗어났습니다.
+           필터 칩을 화면에 노출합니다.</p>
       </div>
       <div class="kv-item">
         <h3>8단계를 3챕터로 묶었습니다</h3>
@@ -264,6 +302,8 @@
     </p>
     <ul class="open-list">
       <li><span class="dot"></span><span><b>카피 전체</b> — 자리 표시입니다. 교육 페이지는 바이브코딩, 나머지는 AI 웹·앱 개발 방향만 반영했습니다. (8/8 회의 2.8)</span></li>
+      <li><span class="dot"></span><span><b>포트폴리오 특성 분류 용어</b> — FR-2.10 원안 유지. 다만 &quot;내부도구&quot;는 발주자 언어가 아니고 리드 키워드(AI 홈페이지 제작·AI 앱 개발)와도 어긋나, 실제 프로젝트 4건 성격 확정 후 재검토합니다.</span></li>
+      <li><span class="dot"></span><span><b>포트폴리오 카드 태그</b> — 현재 더미 태그(브랜드·로컬·B2B 등)가 산업 칩(교육·커머스·의료·기타)과 맞지 않습니다. 실제 프로젝트 4건의 산업 확정 후 일괄 정리합니다.</span></li>
       <li><span class="dot"></span><span><b>8단계 챕터 배분</b> — 시작 1–3 / 제작 4–6 / 인계 7–8은 임의입니다. 실제 단계 내용 확인 후 조정 필요.</span></li>
       <li><span class="dot"></span><span><b>규모 적합성 항목</b> — FR-1.6의 실제 문구 미정. 문의 질을 올리는 유일한 장치이므로 내용 확정이 필요합니다.</span></li>
       <li><span class="dot"></span><span><b>빌더 카드 이미지</b> — 실사 대신 전문성을 드러내는 일러스트 방향. 단, §8의 &quot;캐릭터·마스코트&quot; 금지에 걸리지 않도록 주의.</span></li>
@@ -278,7 +318,7 @@
   <div class="wrap" style="text-align:center;">
     <h2>홈부터 보시겠어요?</h2>
     <p class="lead" style="margin:0 auto 26px;">
-      9개 화면이 서로 연결되어 있어 실제처럼 이동해볼 수 있습니다.
+      12개 화면 중 10개가 서로 연결되어 있어 실제처럼 이동해볼 수 있습니다.
     </p>
     <a href="index.html" class="btn solid">홈 화면 보기</a>
   </div>

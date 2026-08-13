@@ -28,14 +28,37 @@
     <h1 id="cat-title">포트폴리오</h1>
     <p class="lead" id="cat-desc">실전과 제작물을 구분하지 않는 단일 목록입니다 (FR-2.3). 모든 카드는 살아있는 배포 링크를 가집니다.</p>
     <p style="font-size:12px; color:var(--ink-3);">
-      분류 필터는 두지 않습니다. 물량이 확보되면(&quot;상&quot; 등급 8건 이상) 재검토 — FR-2.10 분류 축은
-      카드 태그와 경로(<code>/portfolio/:category</code>)로 유지되므로 FR-6.5 세그먼트 트래킹에는 영향 없습니다.
+      분류는 서비스 특성(주) × 산업(보조) 2축입니다 — FR-2.10. 실제 프로젝트 4건이 추가되며 분류당 3건이 되어
+      합침 조건을 벗어났으므로, 카드 태그와 경로에 더해 화면 필터로도 노출합니다.
+      경로(<code>/portfolio/:category</code>)는 그대로 유지되므로 FR-6.5 세그먼트 트래킹에는 영향 없습니다.
     </p>
   </div>
 </section>
 
 <section style="padding-top:0">
   <div class="wrap">
+    <div class="sec-label">필터 <span class="note">필터 칩 · 단일 선택</span></div>
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:10px;">
+      <span style="font-size:12px; color:var(--ink-3); min-width:34px;">특성</span>
+      <div class="chips" style="margin-bottom:0;">
+        <span class="chip on">전체</span>
+        <span class="chip">랜딩</span>
+        <span class="chip">웹서비스</span>
+        <span class="chip">앱</span>
+        <span class="chip">내부도구</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:26px;">
+      <span style="font-size:12px; color:var(--ink-3); min-width:34px;">산업</span>
+      <div class="chips" style="margin-bottom:0;">
+        <span class="chip on">전체</span>
+        <span class="chip">교육</span>
+        <span class="chip">커머스</span>
+        <span class="chip">의료</span>
+        <span class="chip">기타</span>
+      </div>
+    </div>
+
     <div style="font-size:13px; color:var(--ink-3); margin-bottom:20px;">
       전체 <span id="pf-count">9</span>건 <span class="note">노출 순서는 관리자가 수동 조정 (FR-2.12)</span>
     </div>
