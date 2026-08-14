@@ -27,6 +27,14 @@
   --breakpoint-content: 75rem;
 }
 
+@layer base {
+  /* 한글은 단어 중간에서 줄이 끊기지 않게 한다 — 디자인규칙 「한글 조판」.
+     word-break 는 상속되므로 루트에만 선언하면 전체에 적용된다. */
+  html {
+    word-break: keep-all;
+  }
+}
+
 /* Examples:
  * bg-canvas text-ink-inverse
  * bg-surface-raised text-ink border-border rounded-card

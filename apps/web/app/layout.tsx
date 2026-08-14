@@ -90,7 +90,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </header>
 
-        <main className="mx-auto max-w-3xl px-6 py-12">{children}</main>
+        {/* 폭 제한을 두지 않는다 — 랜딩 섹션은 배경이 화면 끝까지 닿아야 한다.
+            읽기용 화면(blog · about)은 각자의 중첩 레이아웃에서 폭을 잡는다. */}
+        <main>{children}</main>
 
         <footer className="border-t border-border py-10 text-center text-sm text-[var(--color-muted)]">
           Built with Orca AI Company · 콘텐츠는 에이전트가 작성하고 사람이 검수합니다.
