@@ -1,17 +1,18 @@
 /**
  * Site-wide configuration read from the environment.
  *
- * Every value is optional: an unset verification code or GA4 id simply means
- * that integration is off, never a crash. That keeps the template runnable
- * with an empty `.env`.
+ * 이 프로젝트는 SITE_NAME/DESCRIPTION 을 필수로 본다. 미설정 시 화면에서 바로
+ * 드러나도록 폴백을 의도적으로 눈에 띄는 값으로 둔다.
+ *
+ * 나머지 값은 선택이다: 미설정된 소유 확인 코드나 GA4 id 는 해당 연동만 꺼질 뿐
+ * 크래시가 되지 않는다.
  */
 
 export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 
-export const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? 'Orca Blog';
+export const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? 'SITE_NAME_NOT_SET';
 
-export const siteDescription =
-  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? 'AI 에이전트 팀이 기획하고, 검수하고, 발행하는 블로그.';
+export const siteDescription = process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? 'SITE_DESCRIPTION_NOT_SET';
 
 export const siteLocale = process.env.NEXT_PUBLIC_SITE_LOCALE ?? 'ko-KR';
 
