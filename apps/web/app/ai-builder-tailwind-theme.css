@@ -1,0 +1,34 @@
+/* Tailwind CSS v4 theme bridge — no default Tailwind color palette */
+@import "tailwindcss";
+@import "./ai-builder-design-tokens.css";
+
+@theme static {
+  /* Reset the default color namespace, then expose only project colors. */
+  --color-*: initial;
+  --color-canvas: #0b1f3b;
+  --color-surface: #0e2340;
+  --color-surface-raised: #ffffff;
+  --color-surface-soft: #ecf3ff;
+  --color-ink: #0b1f3b;
+  --color-ink-inverse: #ffffff;
+  --color-muted: #566072;
+  --color-subtle: #a8b6cc;
+  --color-brand: #1b64da;
+  --color-brand-soft: #7ea3e8;
+  --color-border: #d7e2f5;
+  --color-border-strong: #d4e3fe;
+
+  --font-sans: "Pretendard Variable", Pretendard, ui-sans-serif, system-ui,
+    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  --radius-card: 1rem;
+  --radius-panel: 1.5rem;
+  --radius-pill: 999px;
+  --breakpoint-content: 75rem;
+}
+
+/* Examples:
+ * bg-canvas text-ink-inverse
+ * bg-surface-raised text-ink border-border rounded-card
+ * bg-brand text-ink-inverse rounded-pill
+ */

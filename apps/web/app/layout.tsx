@@ -13,7 +13,8 @@ import {
   twitterSite,
 } from '@/lib/site';
 
-import './globals.css';
+// The single app stylesheet. It imports ai-builder-design-tokens.css itself.
+import './ai-builder-tailwind-theme.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -60,6 +61,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang={siteLocale.split('-')[0]}>
       <head>
+        {/* Pretendard is not bundled — without this the design falls back to system fonts. */}
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin=""
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+        />
         {/* Naver Search Advisor has no first-class slot in Next's metadata API. */}
         {naverVerification && <meta name="naver-site-verification" content={naverVerification} />}
         {/* Points LLM crawlers at the machine-readable site summary. */}
