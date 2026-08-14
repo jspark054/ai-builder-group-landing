@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 import { Analytics } from '@/components/Analytics';
+import { Footer } from '@/components/layout/Footer';
+import { Header } from '@/components/layout/Header';
 import {
   bingVerification,
   googleVerification,
@@ -74,29 +75,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="llms" href={`${siteUrl}/llms.txt`} />
       </head>
       <body className="min-h-dvh">
-        <header className="border-b border-border">
-          <nav className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              {siteName}
-            </Link>
-            <div className="flex gap-6 text-sm text-[var(--color-muted)]">
-              <Link href="/blog" className="hover:text-brand">
-                글
-              </Link>
-              <Link href="/about" className="hover:text-brand">
-                소개
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <Header />
 
         {/* 폭 제한을 두지 않는다 — 랜딩 섹션은 배경이 화면 끝까지 닿아야 한다.
             읽기용 화면(blog · about)은 각자의 중첩 레이아웃에서 폭을 잡는다. */}
         <main>{children}</main>
 
-        <footer className="border-t border-border py-10 text-center text-sm text-[var(--color-muted)]">
-          Built with Orca AI Company · 콘텐츠는 에이전트가 작성하고 사람이 검수합니다.
-        </footer>
+        <Footer />
 
         <Analytics />
       </body>
