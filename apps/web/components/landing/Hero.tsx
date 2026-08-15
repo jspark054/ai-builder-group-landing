@@ -10,30 +10,41 @@
 //   FN-C03-05  마이크로카피는 v3.2 부터 P-01 미적용
 //   POL-11①-2  등장 애니메이션 없음 — 이 섹션에는 어떤 모션도 두지 않는다
 //
-// 카피는 카피후보 문서 「P-01 랜딩 · 1. 히어로」 기획-2안. 새로 쓰지 않는다.
+// 카피는 content/p01-copy.ts 의 B안(신뢰 중심). 이 파일에 문장을 직접 쓰지 않는다.
+//   FR-1.7(본사 관계 표기)이 미확정이라 본사를 주어로 세우지 않고,
+//   "조직이 책임진다" 취지의 문장을 두지 않는다. 확정 시 카피 파일만 교체한다.
+//   근거는 결정시트 I-7 · 구현결정 260816.
+
+import { Fragment } from 'react';
+
+import { ctaCopy, heroCopy } from '@/content/p01-copy';
 
 export function Hero() {
   return (
     <section className="relative flex min-h-[66dvh] items-center bg-canvas text-ink-inverse">
       <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
-        {/* 줄바꿈은 자동 흘림에 맡기지 않고 직접 끊는다. */}
         <h1 className="max-w-[var(--layout-copy)] font-bold text-[length:clamp(30px,3.9vw,52px)] leading-[1.24] tracking-[-0.03em]">
-          AI 홈페이지 제작·앱 개발
-          <br />
-          누가 만드는지 알고 맡기세요
+          {heroCopy.heading}
         </h1>
 
+        {/* 줄바꿈은 자동 흘림에 맡기지 않고 직접 끊는다.
+            첫 줄은 SEO 키워드(FR-6.1), 둘째 줄이 주장이다. */}
         <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-lg)] leading-[var(--leading-relaxed)]">
-          AI 빌더 그룹의 체계적인 교육을 받은 빌더가 만들고, 결과물은 조직이 책임집니다.
+          {heroCopy.subLines.map((line, index) => (
+            <Fragment key={line}>
+              {index > 0 && <br />}
+              {line}
+            </Fragment>
+          ))}
         </p>
 
         {/* P-10(/contact)이 아직 없어 typedRoutes 가 <Link> 를 거부한다.
             P-10 을 만든 뒤 next/link 로 바꾼다. */}
         <a
-          href="/contact?utm_source=home"
+          href={ctaCopy.href}
           className="mt-[var(--space-10)] inline-flex items-center rounded-pill bg-brand px-[var(--space-7)] py-[var(--space-4)] font-semibold text-ink-inverse hover:bg-brand-soft hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
         >
-          프로젝트 상담하기
+          {ctaCopy.label}
         </a>
       </div>
 
