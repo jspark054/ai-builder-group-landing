@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@orca/content": "workspace:*",
     "@orca/supabase": "workspace:*",
     "@radix-ui/react-select": "^2.3.7",
     "@tiptap/extension-image": "^3.29.1",

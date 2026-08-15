@@ -6,8 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    // `@orca/content` imports siblings with explicit `.ts` specifiers so the
-    // package works both under a bundler and under plain `node --experimental-strip-types`.
+    // 워크스페이스 패키지가 형제 모듈을 `.ts` 확장자로 직접 import 한다
+    // (번들러와 `node --experimental-strip-types` 양쪽에서 동작해야 하기 때문).
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "allowJs": true,

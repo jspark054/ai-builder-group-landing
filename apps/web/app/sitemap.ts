@@ -1,38 +1,33 @@
 import type { MetadataRoute } from 'next';
-import { getRepository } from '@orca/content';
 
 import { siteUrl } from '@/lib/site';
 
 /**
- * Sitemap driven by per-post frontmatter.
+ * 공개 화면 사이트맵.
  *
- * `changefreq` and `priority` are editorial decisions (set in the admin
- * technical SEO panel), not constants — cornerstone content should outrank
- * an archive note in the crawl budget.
+ * 지금은 확정 IA(`4_02_화면목록`)의 **정적 경로만** 싣는다.
+ * 상세 화면(P-04 `/portfolio/{slug}` · P-06 `/builders/{slug}` ·
+ * P-13 `/insights/{slug}`)은 Supabase 스키마가 붙은 뒤 여기에 추가한다.
+ *
+ * 범위 밖: P-07 `/courses`(화면 19종에서 제외). P-02 `/about` 은 미구현이라 뺐다.
  */
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getRepository().getPublished();
+const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
+  { path: '/', changeFrequency: 'daily', priority: 1 },
+  { path: '/portfolio', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/builders', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/process', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/insights', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
+  { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
+];
 
-  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${siteUrl}/blog/${encodeURIComponent(post.slug)}`,
-    lastModified: new Date(post.updatedAt),
-    changeFrequency: post.seo.changefreq,
-    priority: post.seo.priority,
-    ...(post.seo.alternates.length > 0
-      ? {
-          alternates: {
-            languages: Object.fromEntries(
-              post.seo.alternates.map((alternate) => [alternate.hreflang, alternate.href]),
-            ),
-          },
-        }
-      : {}),
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
+
+  return STATIC_ROUTES.map((route) => ({
+    url: route.path === '/' ? siteUrl : `${siteUrl}${route.path}`,
+    lastModified,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
   }));
-
-  return [
-    { url: siteUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
-    { url: `${siteUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${siteUrl}/about`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
-    ...postEntries,
-  ];
 }

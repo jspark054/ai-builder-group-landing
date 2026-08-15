@@ -1,8 +1,8 @@
 {
-  "name": "orca-ai-company",
+  "name": "ai-builder-group-landing",
   "private": true,
   "version": "0.1.0",
-  "description": "Orca AI Company — an AI-native monorepo template (web + admin + agents + LLM wiki)",
+  "description": "AI 빌더그룹 랜딩페이지 — 공개 사이트(web) + 관리 화면(admin)",
   "packageManager": "pnpm@10.11.0",
   "engines": {
     "node": ">=20.11.0",
@@ -18,13 +18,9 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "setup": "bash scripts/orca-setup.sh",
-    "_comment_check": "Named `check`/`audit:content`, not `doctor`/`audit` — pnpm has builtins by those names that would shadow them.",
+    "_comment_check": "Named `check`, not `doctor` — pnpm has a builtin by that name that would shadow it.",
     "check": "bash scripts/check-deps.sh",
-    "audit:content": "node --experimental-strip-types --no-warnings scripts/audit.ts",
-    "agent": "bash scripts/run-agent.sh",
     "context": "bash scripts/load-context.sh",
-    "imagegen": "bash scripts/codex-imagegen.sh",
-    "memory:new": "bash scripts/memory-new.sh",
     "clean": "rm -rf node_modules apps/*/node_modules apps/*/.next packages/*/node_modules .turbo"
   },
   "devDependencies": {
