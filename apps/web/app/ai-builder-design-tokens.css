@@ -1,4 +1,4 @@
-/*
+﻿/*
  * AI Builder Group — extracted design tokens
  * Source: https://ai-builder-group-mauve.vercel.app/
  * Tailwind's default palette is not referenced.
@@ -6,15 +6,15 @@
 
 :root {
   /* Primitive colors */
-  --primitive-navy-950: #0b1f3b;
-  --primitive-navy-900: #0e2340;
+  --primitive-navy-950: #15140f;
+  --primitive-navy-900: #1f1d17;
   --primitive-navy-800: #1a3355;
   --primitive-blue-600: #1b64da;
   --primitive-blue-300: #7ea3e8;
   --primitive-blue-100: #d4e3fe;
   --primitive-blue-50: #ecf3ff;
-  --primitive-slate-500: #566072;
-  --primitive-slate-300: #a8b6cc;
+  --primitive-slate-500: #5e5a50;
+  --primitive-slate-300: #b5afa2;
   --primitive-slate-200: #d7e2f5;
   --primitive-white: #ffffff;
 
@@ -28,10 +28,10 @@
   --color-text-muted: var(--primitive-slate-500);
   --color-text-subtle: var(--primitive-slate-300);
   --color-brand: var(--primitive-blue-600);
-  --color-brand-soft: var(--primitive-blue-300);
+  --color-brand-soft: #164fae;
   --color-border: var(--primitive-slate-200);
   --color-border-strong: var(--primitive-blue-100);
-  --color-overlay: rgb(11 31 59 / 82%);
+  --color-overlay: rgb(21 20 15 / 82%);
 
   /* Typography */
   --font-sans: "Pretendard Variable", Pretendard, ui-sans-serif, system-ui,

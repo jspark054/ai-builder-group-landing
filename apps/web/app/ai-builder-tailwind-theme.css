@@ -1,20 +1,20 @@
-/* Tailwind CSS v4 theme bridge — no default Tailwind color palette */
+﻿/* Tailwind CSS v4 theme bridge — no default Tailwind color palette */
 @import "tailwindcss";
 @import "./ai-builder-design-tokens.css";
 
 @theme static {
   /* Reset the default color namespace, then expose only project colors. */
   --color-*: initial;
-  --color-canvas: #0b1f3b;
-  --color-surface: #0e2340;
+  --color-canvas: #15140f;
+  --color-surface: #1f1d17;
   --color-surface-raised: #ffffff;
   --color-surface-soft: #ecf3ff;
-  --color-ink: #0b1f3b;
+  --color-ink: #15140f;
   --color-ink-inverse: #ffffff;
-  --color-muted: #566072;
-  --color-subtle: #a8b6cc;
+  --color-muted: #5e5a50;
+  --color-subtle: #b5afa2;
   --color-brand: #1b64da;
-  --color-brand-soft: #7ea3e8;
+  --color-brand-soft: #164fae;
   --color-border: #d7e2f5;
   --color-border-strong: #d4e3fe;
 
