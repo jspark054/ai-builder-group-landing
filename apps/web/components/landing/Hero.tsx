@@ -6,7 +6,8 @@
 //   FN-P01-15  H1 은 발주사 실측 스펙 — 700 clamp(30px,3.9vw,52px)/1.24 · -0.03em
 //   FN-P01-19  스크롤 이벤트를 가로채지 않는다
 //   FN-P01-37  스크롤 유도는 문구가 아닌 기호. 텍스트 0자 · 모션 0건
-//   FN-C03-01~03  P-01 CTA 문구 "프로젝트 상담하기" · P-10 이동 · utm_source=home
+//   FN-C03-01~03  CTA 는 C-03 컴포넌트가 그린다 (components/cta/contact-cta.tsx).
+//                 문구 "프로젝트 상담하기" · P-10 이동 · utm_source=home 은 그쪽이 정한다
 //   FN-C03-05  마이크로카피는 v3.2 부터 P-01 미적용
 //   POL-11①-2  등장 애니메이션 없음 — 이 섹션에는 어떤 모션도 두지 않는다
 //
@@ -17,7 +18,8 @@
 
 import { Fragment } from 'react';
 
-import { ctaCopy, heroCopy } from '@/content/p01-copy';
+import { ContactCta } from '@/components/cta/contact-cta';
+import { heroCopy } from '@/content/p01-copy';
 
 export function Hero() {
   return (
@@ -38,14 +40,13 @@ export function Hero() {
           ))}
         </p>
 
-        {/* P-10(/contact)이 아직 없어 typedRoutes 가 <Link> 를 거부한다.
-            P-10 을 만든 뒤 next/link 로 바꾼다. */}
-        <a
-          href={ctaCopy.href}
-          className="mt-[var(--space-10)] inline-flex items-center rounded-pill bg-brand px-[var(--space-7)] py-[var(--space-4)] font-semibold text-ink-inverse hover:bg-brand-soft hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-strong"
-        >
-          {ctaCopy.label}
-        </a>
+        {/* C-03 문의 CTA. 문구·목적지·파라미터는 컴포넌트가 정한다 (FN-C03-01~03).
+            히어로가 자체 <a> 를 갖고 있었으나 같은 CTA 가 두 곳에 정의된 상태라 걷어냈다.
+            FN-C03-05 마이크로카피는 P-01 에서 v3.2 로 삭제됐다. 보조 링크·버튼도 두지 않는다
+            (REQ-F-007 경쟁 CTA 금지, P0). */}
+        <div className="mt-[var(--space-10)]">
+          <ContactCta source="p01" />
+        </div>
       </div>
 
       {/* FN-P01-37 — 기호만 둔다. 읽을 문장을 늘리지 않고, 움직이지도 않는다. */}

@@ -131,6 +131,20 @@ export type ProjectCategoryRow = {
 };
 
 /**
+ * `migrations/0003_site_setting.sql`. 키-값 한 쌍이 한 행입니다.
+ * `id` 가 없고 `key` 가 기본키인 유일한 테이블입니다.
+ *
+ * 현재 키: `contact_form_url` — 문의 폼(Plug) 주소.
+ * 회의록(8/12) 「문의 폼 및 유입 경로」의 "관리자 화면에서 폼 URL을 변경할 수 있도록"
+ * 이 여기에 대응합니다.
+ */
+export type SiteSettingRow = {
+  key: string;
+  value: string;
+  updated_at: string;
+};
+
+/**
  * supabase-js checks this against its internal `GenericSchema`. Omitting
  * `Views` / `Functions` / `Enums` / `CompositeTypes` / `Relationships` makes
  * the constraint fail silently and every query result collapses to `never`,
@@ -173,6 +187,13 @@ export type Database = {
         Row: ProjectCategoryRow;
         Insert: Omit<ProjectCategoryRow, 'id'> & { id?: string };
         Update: Partial<ProjectCategoryRow>;
+        Relationships: [];
+      };
+      // `key` 가 기본키라 Insert 에서 생략할 수 없다 (다른 테이블의 `id?` 와 다르다)
+      site_setting: {
+        Row: SiteSettingRow;
+        Insert: SiteSettingRow;
+        Update: Partial<SiteSettingRow>;
         Relationships: [];
       };
     };
