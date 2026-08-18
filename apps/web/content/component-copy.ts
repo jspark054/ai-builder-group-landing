@@ -33,3 +33,21 @@ export const projectCardCopy = {
   /** 새 창 이동은 시각 아이콘만으로 알리지 않는다 (REQ-N-014 · 접근성) */
   newWindow: '새 창에서 열림',
 } as const;
+
+/**
+ * C-02 빌더 카드 (P-01 섹션 5 · P-05 공용).
+ *
+ * 근거 — 기능명세 §3.2 · 화면설계 §4.2
+ *   FN-C02-04  기수를 배지로 표시한다
+ *   FN-C02-05  담당 프로젝트 수를 표시한다 (공개 상태만 집계 · 공동 담당 포함)
+ *
+ * 이력(career)은 카드에 표기하지 않으므로 관련 문구가 없다 (POL-05).
+ * 이미지 미등록 폴백은 표기명에서 파생하는 값이라 문구가 아니다 (FN-C02-03).
+ */
+export const builderCardCopy = {
+  /** FN-C02-04 — 기수 배지. `cohort` 는 정렬 때문에 int 로 저장한다 (데이터모델 §3.1) */
+  cohortLabel: (cohort: number) => `${cohort}기`,
+
+  /** FN-C02-05 — 담당 프로젝트 수. 0건 빌더는 목록에서 제외되므로 항상 1 이상이다 (POL-02) */
+  projectCount: (count: number) => `${count}건`,
+} as const;
