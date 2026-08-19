@@ -40,11 +40,13 @@ export function CriteriaList({ items }: { items: readonly Criterion[] }) {
   return (
     // 순서가 고정된 목록이다 — 소구점 1·2·3 순서를 재정렬하지 않는다 (FN-P01-12).
     // 번호를 눈으로만 읽히는 라벨로 두는 대신 ol 로 순서를 마크업에 남긴다
-    <ol ref={ref} className="grid grid-cols-1 gap-[var(--space-10)] md:grid-cols-3">
+    <ol ref={ref} className="grid grid-cols-1 items-stretch gap-[var(--space-10)] md:grid-cols-3">
       {items.map((item, index) => (
+        // 설명이 01 은 한 줄, 02·03 은 두 줄이라 칸의 아래 끝이 어긋난다.
+        // 높이만 맞춘다 — 설명을 아래로 밀지 않으므로 문장은 위에서부터 그대로 이어진다
         <li
           key={item.keyword}
-          className={`${TRANSITION} ${REDUCED} ${isRevealed ? SHOWN : HIDDEN}`}
+          className={`flex h-full flex-col ${TRANSITION} ${REDUCED} ${isRevealed ? SHOWN : HIDDEN}`}
           style={{ transitionDelay: `calc(var(--duration-fast) * ${index})` }}
         >
           {/* 번호 — 소형 라벨. ol 이 순서를 이미 전달하므로 읽어 줄 필요가 없다 */}

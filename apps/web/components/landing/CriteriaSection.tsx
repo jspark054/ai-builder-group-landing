@@ -19,6 +19,17 @@ import { CriteriaList } from '@/components/landing/CriteriaList';
 import { Section } from '@/components/landing/Section';
 import { p01Copy } from '@/content/p01-copy';
 
+/**
+ * 섹션 4(포트폴리오)와의 이음매를 좁힌다.
+ * Section 의 --section-block 이 아래·위로 두 겹 겹쳐 12rem 이 된다.
+ * Section 은 P-09 와 공유하는 부품이라 고치지 않고(하드 룰), 아래쪽 한 겹만 당겨 상쇄한다.
+ *
+ * /process 의 같은 이름 상수와 값이 같지만 공용으로 끌어올리지 않는다 —
+ * 어느 이음매를 좁힐지는 화면마다 판단이 다르다. 여기서는 섹션 3↔4 한 곳뿐이고,
+ * 섹션 2↔3 은 그대로 둔다. 어둠에서 밝음으로 넘어가는 전환점이라 여백이 필요하다.
+ */
+const TRAILING_PULL = '-mb-[var(--section-block)]';
+
 export function CriteriaSection() {
   return (
     <Section
@@ -27,7 +38,9 @@ export function CriteriaSection() {
       description={p01Copy.criteria.description}
       className="bg-surface-raised text-ink"
     >
-      <CriteriaList items={p01Copy.criteria.items} />
+      <div className={TRAILING_PULL}>
+        <CriteriaList items={p01Copy.criteria.items} />
+      </div>
     </Section>
   );
 }
