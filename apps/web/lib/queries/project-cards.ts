@@ -26,14 +26,31 @@ function isBlank(value: string | null | undefined): boolean {
   return !value || value.trim() === '';
 }
 
+export type ProjectCardFilter = {
+  /**
+   * 넘기면 이 빌더가 담당한 프로젝트만 남긴다 (P-06 · FN-P06-02).
+   *
+   * `is_owner` 를 보지 않으므로 **공동 담당 건도 포함**된다 — 화면설계 §5.5 의
+   * 「공동 프로젝트가 담당자 전원 페이지에 각각 노출된다」(G-3d 확정)가 그 조항이다.
+   *
+   * 쿼리를 늘리지 않는다. 담당 관계는 아래에서 어차피 한 번 읽으므로 그 결과로 거른다.
+   */
+  builderId?: string;
+};
+
 /**
  * 공개 프로젝트를 C-01 카드용 형태로 읽는다.
  *
  * - `project.is_public = true`
  * - 썸네일이 없는 건은 제외 (POL-02)
  * - `project.sort_order` 오름차순 (동순위는 `created_at` 오름차순으로 고정)
+ *
+ * P-01 섹션 4 · P-03 은 인자 없이 부르고, P-06 만 `builderId` 를 넘긴다.
+ * 카드 조립을 한 곳에 두기 위해서다 — 화면마다 카드 쿼리를 새로 만들지 않는다.
  */
-export async function getProjectCards(): Promise<ProjectCardData[]> {
+export async function getProjectCards(
+  filter: ProjectCardFilter = {},
+): Promise<ProjectCardData[]> {
   // 로컬 `pnpm build` 는 루트 .env 를 읽지 않는다 (build 스크립트가 with-env.sh 를 거치지 않는다).
   // 그 상태에서 throw 하면 `/` 프리렌더가 통째로 깨지므로 빈 목록으로 넘긴다 —
   // 섹션은 POL-02 에 따라 스스로 숨는다. Vercel 은 환경변수가 주입되므로 실제 값으로 렌더된다.
@@ -96,7 +113,17 @@ export async function getProjectCards(): Promise<ProjectCardData[]> {
   const categoryById = new Map((categories.data ?? []).map((row) => [row.id, row]));
   const builderById = new Map((builders.data ?? []).map((row) => [row.id, row]));
 
-  return visible.map((project) => {
+  // P-06 필터. 정렬은 건드리지 않는다 — project.sort_order 오름차순이 그대로 남는다
+  const scoped =
+    filter.builderId === undefined
+      ? visible
+      : visible.filter((project) =>
+          (builderLinks.data ?? []).some(
+            (link) => link.project_id === project.id && link.builder_id === filter.builderId,
+          ),
+        );
+
+  return scoped.map((project) => {
     // FN-C01-05 — category.sort_order 앞선 것부터 최대 2개.
     // 정렬을 DB 에 맡기지 않는 이유: 순서 기준이 연결 테이블이 아니라 category 쪽에 있다.
     const projectCategories = (categoryLinks.data ?? [])

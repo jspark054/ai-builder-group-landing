@@ -1,18 +1,19 @@
 import type { MetadataRoute } from 'next';
 
 import { projectUrl } from '@/lib/jsonld';
+import { getPublicBuilderSlugs } from '@/lib/queries/builder-detail';
 import { getPublicProjectSlugs } from '@/lib/queries/project-detail';
-import { siteUrl } from '@/lib/site';
+import { absoluteUrl, siteUrl } from '@/lib/site';
 
 /**
  * 공개 화면 사이트맵.
  *
- * 정적 경로 + **P-04 `/portfolio/{slug}` 공개분**을 싣는다.
- * 나머지 상세 화면(P-06 `/builders/{slug}` · P-13 `/insights/{slug}`)은
- * 해당 화면을 만들 때 같은 방식으로 추가한다.
+ * 정적 경로 + **P-04 `/portfolio/{slug}` · P-06 `/builders/{slug}` 공개분**을 싣는다.
+ * 남은 상세 화면(P-13 `/insights/{slug}`)은 그 화면을 만들 때 같은 방식으로 추가한다.
  *
- * 비공개 프로젝트는 쿼리가 이미 걸러 준다 — 화면설계 §5.3 「비공개·없는 슬러그는
- * 404 반환. **sitemap 제외**」가 여기 걸리는 조항이다.
+ * 비공개 프로젝트·빌더는 쿼리가 이미 걸러 준다 — 화면설계 §5.3 「비공개·없는
+ * 슬러그는 404 반환. **sitemap 제외**」가 여기 걸리는 조항이고, P-06 은 담당
+ * 프로젝트 0건도 같이 빠진다 (POL-02).
  *
  * 범위 밖: P-07 `/courses`(화면 19종에서 제외). P-02 `/about` 은 미구현이라 뺐다.
  */
@@ -46,5 +47,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...projectEntries];
+  // 영업이 단독 전달하는 자료라 프로젝트 상세와 같은 무게로 둔다 (화면설계 §5.5)
+  const builderEntries: MetadataRoute.Sitemap = (await getPublicBuilderSlugs()).map((slug) => ({
+    url: absoluteUrl(`/builders/${encodeURIComponent(slug)}`),
+    lastModified,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  return [...staticEntries, ...projectEntries, ...builderEntries];
 }

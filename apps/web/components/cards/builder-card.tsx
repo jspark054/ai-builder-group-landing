@@ -37,6 +37,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { builderCardCopy } from '@/content/component-copy';
+import { displayNameInitial } from '@/lib/display-name';
 
 export type BuilderCardData = {
   slug: string;
@@ -66,30 +67,8 @@ type BuilderCardProps = {
   variant?: BuilderCardVariant;
 };
 
-/**
- * FN-C02-03 — 이니셜 폴백에 쓸 한 글자.
- *
- * 공백이 있으면 **마지막 조각**의 첫 글자, 없으면 표기명의 첫 글자다.
- *   「빌더 A」 → A · 「빌더 F」 → F · 「김도영」 → 김 · 「Jane Doe」 → D
- *
- * 앞 글자를 그대로 쓰면 「빌더 A」~「빌더 F」가 전원 「빌」이 되어 폴백이 고장난
- * 것처럼 보인다. 다만 뒤쪽이 구분되는 이름 형태는 플레이스홀더만이 아니다 —
- * 성과 이름을 띄어 쓰는 로마자 표기도 같다. 그래서 플레이스홀더 전용 분기를
- * 두지 않고 일반 규칙으로 둔다. 실명으로 교체돼도 그대로 동작한다.
- *
- * 표시 시점에 계산한다. `builder` 에 이니셜 컬럼을 두지 않는다 — 표기명에서
- * 유도되는 파생 값이라 저장하면 두 값이 어긋난다 (데이터모델 §6).
- *
- * `[0]` 이 아니라 `Array.from` 인 이유: 이모지·일부 문자가 서로게이트 쌍이라
- * 인덱스 접근이 반쪽 코드 유닛을 잘라 깨진 글자를 렌더한다.
- */
-function initial(displayName: string): string {
-  // \s+ 로 나눠 연속 공백에도 빈 조각이 생기지 않게 한다.
-  // 표기명이 공백뿐이면 trim 후 '' 라 split 결과가 [''] 이고, 아래에서 '' 로 떨어진다.
-  const last = displayName.trim().split(/\s+/).at(-1) ?? '';
-  const [first] = Array.from(last);
-  return first ?? '';
-}
+// 이니셜 폴백 글자는 lib/display-name.ts 가 계산한다.
+// C-02 카드와 P-06 프로필이 같은 규칙을 써야 해서 컴포넌트 밖으로 뺐다.
 
 const FOCUS_RING =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
@@ -116,11 +95,6 @@ const AVATAR_CLASS: Record<BuilderCardVariant, string> = {
 };
 
 export function BuilderCard({ data, variant = 'p05' }: BuilderCardProps) {
-  // P-06(`/builders/[slug]`)이 아직 없어 typedRoutes 가 문자열 href 를 거부한다.
-  // UrlObject 형태는 경로 검증 대상이 아니라 통과하고 런타임 동작도 같다.
-  // P-06 을 만든 뒤 문자열 템플릿으로 되돌린다. (같은 우회를 project-card.tsx 도 쓴다)
-  const detailHref = { pathname: `/builders/${data.slug}` };
-
   // FN-P01-26 · 29 — P-01 섹션 5 는 원형과 표기명만 남긴다
   const showDetails = variant === 'p05';
 
@@ -128,7 +102,9 @@ export function BuilderCard({ data, variant = 'p05' }: BuilderCardProps) {
     <article className="h-full w-full">
       {/* FN-C02-06 — 카드 전체가 P-06 진입 링크다.
           min-h-11(44px)은 sm 미만에서도 터치 영역 하한을 보장한다 (REQ-N-014) */}
-      <Link href={detailHref} className={FRAME_CLASS[variant]}>
+      {/* P-06 이 생겨 UrlObject 우회를 걷어냈다. 변수로 빼면 typedRoutes 의 제네릭
+          추론이 풀려 RouteImpl 에 맞지 않으므로 인라인으로 둔다 (project-card.tsx 와 같다) */}
+      <Link href={`/builders/${data.slug}`} className={FRAME_CLASS[variant]}>
         {/* 원형 · aspect-square 고정.
             shrink-0 이 없으면 세로 플렉스에서 눌려 원이 타원이 된다 —
             카드 높이는 행에서 가장 큰 카드가 정하는데, 눌리는 쪽은 늘 이미지다.
@@ -155,7 +131,7 @@ export function BuilderCard({ data, variant = 'p05' }: BuilderCardProps) {
               aria-hidden="true"
               className="absolute inset-0 flex items-center justify-center font-semibold text-brand text-[length:var(--font-size-xl)] leading-[var(--leading-tight)]"
             >
-              {initial(data.displayName)}
+              {displayNameInitial(data.displayName)}
             </span>
           )}
         </div>

@@ -40,10 +40,10 @@ export type PostRow = {
 export type PostInsert = Omit<PostRow, 'id'> & { id?: string };
 
 /**
- * 아래 5종은 `migrations/0002_ai_builder_group.sql` 의 컬럼과 1:1 로 맞춥니다.
+ * 아래 6종은 `migrations/0002_ai_builder_group.sql` 의 컬럼과 1:1 로 맞춥니다.
  * 마이그레이션을 바꾸면 이 파일도 함께 고치세요.
- * `course` · `insight` · `admin_user` · `site_setting` 은 아직 읽는 화면이 없어
- * 넣지 않았습니다. 필요할 때 같은 방식으로 추가합니다.
+ * `insight` · `admin_user` 는 아직 읽는 화면이 없어 넣지 않았습니다.
+ * 필요할 때 같은 방식으로 추가합니다.
  *
  * `Relationships` 가 비어 있어 PostgREST 중첩 select
  * (`project_category(category(...))`)는 타입이 잡히지 않습니다.
@@ -56,6 +56,33 @@ export type LinkGrade = 'live' | 'deploy' | 'repo' | 'video' | 'none';
 
 /** 포트폴리오 분류 축. 계층 없이 두 축을 한 목록으로 관리합니다 (데이터모델 §3.4). */
 export type CategoryAxis = 'industry' | 'service';
+
+/**
+ * 교육 과정 상태. P-07 카드가 「모집 중 / 준비 중」을 가릅니다 (데이터모델 §3.6).
+ * P-07 은 범위 밖이지만 컬럼 제약(`course_status_check`)이라 타입에 그대로 둡니다.
+ */
+export type CourseStatus = 'open' | 'preparing';
+
+/**
+ * 교육 과정. P-08 폐지로 공개 경로는 없어졌고, 지금 읽는 곳은
+ * P-06 의 수료 과정명 표기 한 곳뿐입니다 (`FN-P06-05` — **텍스트로만**).
+ */
+export type CourseRow = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  /** 커리큘럼 항목 배열. JSON 구조는 과정 콘텐츠 수령 후 확정 (데이터모델 §8-7) */
+  curriculum: unknown[];
+  status: CourseStatus;
+  is_public: boolean;
+  sort_order: number;
+  meta_title: string | null;
+  meta_description: string | null;
+  og_image_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export type BuilderRow = {
   id: string;
@@ -157,6 +184,12 @@ export type Database = {
         Row: PostRow;
         Insert: PostInsert;
         Update: Partial<PostInsert>;
+        Relationships: [];
+      };
+      course: {
+        Row: CourseRow;
+        Insert: Omit<CourseRow, 'id'> & { id?: string };
+        Update: Partial<CourseRow>;
         Relationships: [];
       };
       builder: {
