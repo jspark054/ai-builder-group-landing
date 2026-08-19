@@ -13,6 +13,16 @@ import { Hero } from '@/components/landing/Hero';
 import { PortfolioSection } from '@/components/landing/PortfolioSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 
+/**
+ * IA §3.1 — 렌더링 `SSG+ISR`.
+ *
+ * 섹션 4·5·8 이 supabase-js 로 읽는데 그 호출은 Next 의 fetch 캐시를 타지 않는다.
+ * 이 값이 없으면 빌드 시점에 굳어 관리자가 프로젝트·빌더를 바꿔도 반영되지 않는다.
+ * P-03 `/portfolio` 와 같은 주기로 맞춘다 — 같은 데이터를 같은 쿼리로 보여주는
+ * 두 화면의 신선도가 갈라지면 랜딩과 목록의 내용이 어긋난다.
+ */
+export const revalidate = 3600;
+
 export default function LandingPage() {
   return (
     <>
