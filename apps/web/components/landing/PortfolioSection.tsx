@@ -18,6 +18,8 @@ import Link from 'next/link';
 
 import { ProjectCard } from '@/components/cards/project-card';
 import { Section } from '@/components/landing/Section';
+import { PlaceholderNotice } from '@/components/PlaceholderNotice';
+import { placeholderNoticeCopy } from '@/content/component-copy';
 import { p01Copy } from '@/content/p01-copy';
 import { getProjectCards } from '@/lib/queries/project-cards';
 
@@ -34,6 +36,13 @@ export async function PortfolioSection() {
       description={p01Copy.portfolio.description}
       className="bg-surface-soft text-ink"
     >
+      {/* 실데이터 반영 시 이 블록을 지운다 (components/PlaceholderNotice.tsx 참조).
+          Section 이 제목 슬롯을 갖고 있어 h2 위에는 넣을 수 없다 — 목록 바로 위가 섹션 상단이다.
+          간격은 목록 쪽 className 을 건드리지 않도록 이 래퍼가 갖는다 */}
+      <div className="mb-[var(--space-6)]">
+        <PlaceholderNotice text={placeholderNoticeCopy.portfolio} />
+      </div>
+
       <ul className="grid grid-cols-1 gap-[var(--space-6)] md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <li key={project.slug} className="flex">

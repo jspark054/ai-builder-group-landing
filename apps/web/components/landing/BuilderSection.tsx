@@ -27,6 +27,8 @@ import Link from 'next/link';
 
 import { BuilderCard } from '@/components/cards/builder-card';
 import { Section } from '@/components/landing/Section';
+import { PlaceholderNotice } from '@/components/PlaceholderNotice';
+import { placeholderNoticeCopy } from '@/content/component-copy';
 import { p01Copy } from '@/content/p01-copy';
 import { getBuilderCards } from '@/lib/queries/builder-cards';
 
@@ -44,6 +46,13 @@ export async function BuilderSection() {
       description={p01Copy.builders.description}
       className="bg-surface-raised text-ink"
     >
+      {/* 실데이터 반영 시 이 블록을 지운다 (components/PlaceholderNotice.tsx 참조).
+          Section 이 제목 슬롯을 갖고 있어 h2 위에는 넣을 수 없다 — 껍데기는 고치지 않는다.
+          간격은 목록 쪽 className 을 건드리지 않도록 이 래퍼가 갖는다 */}
+      <div className="mb-[var(--space-6)]">
+        <PlaceholderNotice text={placeholderNoticeCopy.builder} />
+      </div>
+
       {/* FN-P01-35 — 한 줄 6명. 12명이면 자연히 2줄이 된다.
           FN-P01-26 이 전원 노출이므로 slice 로 상한을 두지 않는다.
           ("인원 증가 시 페이지 길이 불변"을 요구하던 FN-P01-06 은 v4.0 이 뒤집었다) */}
