@@ -30,14 +30,17 @@
 //
 // 4) 본문 폭은 세 블록이 같은 값을 쓴다
 //    Section 이 h2 에 --layout-content 를 걸고 있으므로 children 도 같은 폭으로 맞춘다.
-//    가운데 정렬(mx-auto)을 쓰지 않는 이유는 제목이 왼쪽 정렬이라 축이 어긋나기 때문이다.
+//    블록 2 · 3 은 가운데 정렬(mx-auto)을 쓰지 않는다. 제목이 왼쪽 정렬이라 축이 어긋난다.
+//    블록 4 다이어그램만 사용자 지시(8/19)로 가운데 정렬한다 — 좌우 대칭 도형이라
+//    왼쪽에 붙이면 패널 안의 축과 h2 의 축이 둘 다 보여 어느 쪽도 기준이 되지 않는다.
 //    블록 3 본문을 Section 의 description 슬롯에 넣지 않은 것도 같은 이유다 —
 //    그 슬롯은 --layout-copy(42rem)로 고정돼 있어 혼자만 폭이 좁아진다.
 //    Section 은 P-01 과 공유하는 부품이므로 이 화면 사정으로 고치지 않는다.
 //
 // 화면에 남는 숫자는 헤더 서브의 "8단계"와 단계 번호 01~08 뿐이다.
 // 둘 다 확정된 프로세스 구조이지 실적 수치가 아니므로 POL-01 대상이 아니다.
-// 묶음 이름 넷에는 번호를 붙이지 않는다 — 붙이는 순간 4단계 프로세스로 읽힌다.
+// 묶음 표기 「STEP 01–02」 는 단계 번호를 그대로 옮긴 것이다. 묶음에 별도 번호를
+// 붙이지 않는다 — 붙이는 순간 8단계가 아니라 4단계 프로세스로 읽힌다.
 
 import type { Metadata } from 'next';
 import { Fragment } from 'react';
@@ -85,7 +88,12 @@ export default function ProcessPage() {
         {/* 블록 2 — 8단계 프로세스 (FN-P09-02 · FN-P09-03)
             스크롤 위치 표시 때문에 이 목록만 클라이언트다 */}
         <Section id="process-steps" heading={processCopy.heading}>
-          <ProcessSteps className={BLOCK_WIDTH} groups={processCopy.groups} gate={processCopy.gate} />
+          <ProcessSteps
+            className={BLOCK_WIDTH}
+            lead={processCopy.lead}
+            groups={processCopy.groups}
+            gate={processCopy.gate}
+          />
         </Section>
 
         {/* 블록 3 — 역할 분리 조직 (FN-P09-04)
@@ -121,10 +129,10 @@ export default function ProcessPage() {
             이미지 파일이 아니라 div/CSS 로 조립한다. 외부 에셋 수급을 기다리지 않는다.
             제품명·수치를 넣지 않는다 (기획안 §2-1 · POL-01) */}
         <Section id="tool" heading={toolCopy.heading}>
-          <div className={`${BLOCK_WIDTH} rounded-panel border border-border bg-surface-soft p-[var(--space-8)]`}>
+          <div className={`${BLOCK_WIDTH} mx-auto rounded-panel border border-border p-[var(--space-8)]`}>
             {/* 뿌리 — 패널 상단 중앙 */}
             <div className="flex justify-center">
-              <p className="rounded-card bg-canvas px-[var(--space-6)] py-[var(--space-4)] text-center font-semibold text-ink-inverse text-[length:var(--font-size-md)]">
+              <p className="rounded-card bg-brand px-[var(--space-6)] py-[var(--space-4)] text-center font-semibold text-ink-inverse text-[length:var(--font-size-md)]">
                 {diagram.root}
               </p>
             </div>
@@ -142,7 +150,7 @@ export default function ProcessPage() {
               {diagram.branches.map((branch) => (
                 <li key={branch} className="flex h-full flex-col items-center">
                   <span aria-hidden="true" className="hidden h-[var(--space-6)] w-px bg-border-strong md:block" />
-                  <span className="flex w-full flex-1 items-center justify-center rounded-card border border-border bg-surface-raised px-[var(--space-4)] py-[var(--space-4)] text-center text-[length:var(--font-size-base)]">
+                  <span className="flex w-full flex-1 items-center justify-center rounded-card border border-border px-[var(--space-4)] py-[var(--space-4)] text-center text-[length:var(--font-size-base)]">
                     {branch}
                   </span>
                 </li>
