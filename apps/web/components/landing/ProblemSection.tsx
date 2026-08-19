@@ -1,0 +1,56 @@
+// P-01 랜딩 · 섹션 2 문제 제기
+//
+// 근거 — 화면설계 §5.1 · 기능명세 §4.1 · 디자인규칙 「P-01 랜딩 배경 리듬」
+//   FN-P01-13  아이브로우 라벨 없음
+//   FN-P01-20  인용문은 본문과 **같은 크기·굵기**를 쓰고 색으로만 구분한다.
+//              인용이 연한 쪽이다 — 인용이 답보다 강해지면 불안을 파는 인상이 된다 (POL-13).
+//              답은 이 섹션이 아니라 섹션 3 이 한다
+//   REQ-F-004  사고 사례를 나열하지 않는다
+//   배경 리듬  2 문제 제기 = bg-canvas · text-ink-inverse (「어둠 ①」 구간)
+//   인터랙션   인용 한 줄만 페이드 인 → components/landing/ProblemQuote.tsx
+//
+// 제목(h2)을 두지 않아 Section.tsx 를 쓰지 않는다. Section 은 heading 이 필수이고,
+// 이 섹션은 인용과 본문 두 덩어리뿐이다. 컨테이너 폭·좌우 여백·상하 여백은 같은 값을 쓴다.
+//
+// 색 — FN-P01-20 은 인용을 `--color-muted` 로 지정하지만 그 값(#5e5a50)은
+// `bg-canvas`(#15140f) 위에서 대비가 3:1 에 못 미쳐 읽히지 않는다. 어두운 배경 위의
+// 연한 글자는 `text-subtle` 이 맡는다 (디자인규칙 색 표 · 히어로 서브카피도 같은 선택이다).
+// "본문보다 연하게"라는 조건은 그대로 지킨다.
+//
+// 미구현 — 기능명세 v4.x 의 FN-P01-16(sticky 고정 · 3문장 순차 등장) ·
+// FN-P01-17·18·24(상하 마퀴, 흑백→컬러 전환)는 이번 범위에 넣지 않았다.
+// 마퀴는 `project` 썸네일에 의존하는데 현재 DB 는 테스트 데이터뿐이라
+// 그대로 노출하면 POL-11①-3(더미 데이터)에 걸린다. 인터랙션 배치는
+// 디자인규칙 「P-01 섹션별 인터랙션」 표(인용 한 줄만 페이드 인)를 기준으로 삼았다.
+
+import { Fragment } from 'react';
+
+import { ProblemQuote } from '@/components/landing/ProblemQuote';
+import { p01Copy } from '@/content/p01-copy';
+
+export function ProblemSection() {
+  return (
+    <section id="problem" className="bg-canvas text-ink-inverse">
+      <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
+        {/* 인용과 본문이 같은 크기·굵기를 쓰도록 타이포는 이 래퍼가 한 번만 정한다.
+            둘 사이에서 달라지는 것은 색뿐이다 (FN-P01-20) */}
+        <div className="max-w-[var(--layout-content-wide)] text-[length:var(--font-size-xl)] leading-[var(--leading-body)]">
+          {/* R1 — 따옴표는 문자 그대로 포함된 문안이다 (기능명세 §4.1 카피표 v4.7).
+              연한 쪽은 인용이다 */}
+          <ProblemQuote className="text-subtle">{p01Copy.problem.quote}</ProblemQuote>
+
+          {/* R2 — 두 줄을 <br> 로 직접 끊는다. 자동 줄바꿈에 맡기지 않는다.
+              페이드 인을 걸지 않는 쪽이다 */}
+          <p className="mt-[var(--space-8)]">
+            {p01Copy.problem.bodyLines.map((line, index) => (
+              <Fragment key={line}>
+                {index > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
