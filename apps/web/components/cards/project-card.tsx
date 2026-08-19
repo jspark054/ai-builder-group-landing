@@ -61,6 +61,7 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
   // P-04(`/portfolio/[slug]`)가 아직 없어 typedRoutes 가 문자열 href 를 거부한다.
   // UrlObject 형태는 경로 검증 대상이 아니라 통과하고 런타임 동작도 같다.
   // P-04 를 만든 뒤 문자열 템플릿으로 되돌린다.
+  // (P-03 `/portfolio` 쪽 같은 우회는 목록이 생기면서 정리됐다)
   const detailHref = { pathname: `/portfolio/${data.slug}` };
   const builderText = showBuilder ? builderLabel(data.builders) : null;
   const externalLabel =

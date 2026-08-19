@@ -53,11 +53,8 @@ export async function PortfolioSection() {
       </ul>
 
       <div className="mt-[var(--space-10)]">
-        {/* P-03(/portfolio)이 아직 없어 typedRoutes 가 문자열 href 를 거부한다.
-            UrlObject 는 경로 검증 대상이 아니라 통과한다. P-03 완성 후 되돌린다.
-            (같은 우회를 components/cards/project-card.tsx 도 쓴다) */}
         <Link
-          href={{ pathname: '/portfolio' }}
+          href="/portfolio"
           className="inline-flex min-h-11 items-center gap-[var(--space-2)] font-semibold text-brand text-[length:var(--font-size-md)] hover:text-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
           {p01Copy.portfolio.moreLabel}
