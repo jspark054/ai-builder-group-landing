@@ -7,8 +7,8 @@
 //   FN-P09-04  역할 분리 조직을 표시한다 → 문장 + 노드 3개(영업팀 → 팀장 → 실무)
 //   FN-P09-05  관리 도구를 실화면 또는 다이어그램으로 표시한다 → 다이어그램 택
 //
-// DB 연동이 없는 정적 화면이라 서버 컴포넌트 그대로 둔다 (클라이언트 지시자 없음).
-// 공개 화면이므로 서버가 콘텐츠를 담은 HTML 을 반환한다 (REQ-N-001).
+// 이 파일은 서버 컴포넌트다. 클라이언트가 되는 곳은 블록 2 목록(ProcessSteps) 하나뿐이고
+// 그마저 SSR 마크업을 그대로 내보내므로 공개 화면 조건(REQ-N-001)은 유지된다.
 //
 // 판단 네 가지를 여기에 남긴다.
 //
@@ -17,9 +17,11 @@
 //    노출하면 POL-01 불합격이다 (PRD FR-4.3 · POL-09). 다이어그램은 외부 에셋을
 //    기다리지 않도록 이미지가 아니라 div/CSS 로 조립했다.
 //
-// 2) 모션 없음
-//    P-01 의 배경 리듬·섹션별 인터랙션은 랜딩 전용이다 (디자인규칙 「다른 공개 화면」).
-//    특히 섹션 7 의 연결선 드로잉을 여기로 옮겨오지 않는다 — 읽으러 온 화면이다.
+// 2) 움직이는 것은 블록 2 하나뿐이다
+//    현재 읽는 단계를 색과 테두리로 표시한다. 등장 애니메이션이 아니라 위치 표시다.
+//    나머지 세 블록(헤더 · 조직 · 다이어그램)은 의도적으로 비운다 — 전 섹션에 깔면
+//    POL-11①-2(절제) 반려 사유다. 특히 P-01 섹션 7 의 연결선 드로잉을 여기로
+//    옮겨오지 않는다. 읽으러 온 화면이다.
 //
 // 3) 문의 CTA 없음
 //    C-03 은 P-01 · P-04 · P-06 3종 전용이다. 네 번째를 신설하면 REQ-F-007(P0) 위반이다
@@ -35,12 +37,14 @@
 //
 // 화면에 남는 숫자는 헤더 서브의 "8단계"와 단계 번호 01~08 뿐이다.
 // 둘 다 확정된 프로세스 구조이지 실적 수치가 아니므로 POL-01 대상이 아니다.
+// 묶음 이름 넷에는 번호를 붙이지 않는다 — 붙이는 순간 4단계 프로세스로 읽힌다.
 
 import type { Metadata } from 'next';
 import { Fragment } from 'react';
 
 import { Section } from '@/components/landing/Section';
 
+import { ProcessSteps } from './ProcessSteps';
 import { headerCopy, organizationCopy, processCopy, toolCopy } from './p09-copy';
 
 export const metadata: Metadata = {
@@ -53,21 +57,7 @@ export const metadata: Metadata = {
 /** 세 블록이 공유하는 본문 폭. Section 의 h2 와 같은 값이라 왼쪽 축이 맞는다. */
 const BLOCK_WIDTH = 'max-w-[var(--layout-content)]';
 
-/** 단계 사이 관문. 일곱 곳 전부에 같은 모양으로 들어간다 (FN-P09-03). */
-function Gate() {
-  return (
-    <div className="flex flex-col items-center py-[var(--space-3)]">
-      <span aria-hidden="true" className="h-[var(--space-4)] w-px bg-border" />
-      <span className="rounded-pill border border-border-strong bg-surface-soft px-[var(--space-4)] py-[var(--space-1-5)] font-semibold text-brand text-[length:var(--font-size-xs)] tracking-[var(--tracking-label)]">
-        {processCopy.gate}
-      </span>
-      <span aria-hidden="true" className="h-[var(--space-4)] w-px bg-border" />
-    </div>
-  );
-}
-
 export default function ProcessPage() {
-  const { steps } = processCopy;
   const { nodes } = organizationCopy;
   const { diagram } = toolCopy;
 
@@ -92,37 +82,10 @@ export default function ProcessPage() {
 
       {/* 본문 세 블록은 한 덩어리로 밝게 간다. 배경을 블록마다 뒤집지 않는다 */}
       <div className="bg-surface-raised text-ink">
-        {/* 블록 2 — 8단계 프로세스 (FN-P09-02 · FN-P09-03) */}
+        {/* 블록 2 — 8단계 프로세스 (FN-P09-02 · FN-P09-03)
+            스크롤 위치 표시 때문에 이 목록만 클라이언트다 */}
         <Section id="process-steps" heading={processCopy.heading}>
-          <ol className={BLOCK_WIDTH}>
-            {steps.map((step, index) => {
-              // 번호는 나열 순서에서 파생된다. 카피 파일에 박지 않는다
-              const ordinal = String(index + 1).padStart(2, '0');
-
-              return (
-                <li key={step.label}>
-                  {/* 관문은 단계와 단계 사이에만 놓는다 — 첫 단계 앞에는 없다 */}
-                  {index > 0 && <Gate />}
-                  <div className="flex gap-[var(--space-5)] rounded-card border border-border p-[var(--space-6)]">
-                    <span
-                      aria-hidden="true"
-                      className="shrink-0 font-mono font-semibold text-subtle text-[length:var(--font-size-md)] leading-[var(--leading-heading)] tabular-nums"
-                    >
-                      {ordinal}
-                    </span>
-                    <div>
-                      <p className="font-semibold text-[length:var(--font-size-lg)] leading-[var(--leading-heading)]">
-                        {step.label}
-                      </p>
-                      <p className="mt-[var(--space-2)] text-muted text-[length:var(--font-size-base)] leading-[var(--leading-relaxed)]">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+          <ProcessSteps className={BLOCK_WIDTH} groups={processCopy.groups} gate={processCopy.gate} />
         </Section>
 
         {/* 블록 3 — 역할 분리 조직 (FN-P09-04)
@@ -173,11 +136,13 @@ export default function ProcessPage() {
                 2열로 접히면 행이 둘로 나뉘어 이 선이 두 번째 행에 닿지 않으므로 그리지 않는다 */}
             <span aria-hidden="true" className="mx-[12.5%] hidden h-px bg-border-strong md:block" />
 
-            <ul className="mt-[var(--space-4)] grid grid-cols-2 gap-[var(--space-4)] md:mt-0 md:grid-cols-4">
+            {/* 가지 카드는 행에서 가장 높은 것에 맞춘다. 「단계별 검수보고서 발송」이
+                두 줄이라 혼자 튀어나오던 자리다 */}
+            <ul className="mt-[var(--space-4)] grid grid-cols-2 items-stretch gap-[var(--space-4)] md:mt-0 md:grid-cols-4">
               {diagram.branches.map((branch) => (
-                <li key={branch} className="flex flex-col items-center">
+                <li key={branch} className="flex h-full flex-col items-center">
                   <span aria-hidden="true" className="hidden h-[var(--space-6)] w-px bg-border-strong md:block" />
-                  <span className="w-full rounded-card border border-border bg-surface-raised px-[var(--space-4)] py-[var(--space-4)] text-center text-[length:var(--font-size-base)]">
+                  <span className="flex w-full flex-1 items-center justify-center rounded-card border border-border bg-surface-raised px-[var(--space-4)] py-[var(--space-4)] text-center text-[length:var(--font-size-base)]">
                     {branch}
                   </span>
                 </li>
