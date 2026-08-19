@@ -58,11 +58,11 @@ function builderLabel(builders: { displayName: string }[]): string | null {
 }
 
 export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
-  // P-04(`/portfolio/[slug]`)가 아직 없어 typedRoutes 가 문자열 href 를 거부한다.
-  // UrlObject 형태는 경로 검증 대상이 아니라 통과하고 런타임 동작도 같다.
-  // P-04 를 만든 뒤 문자열 템플릿으로 되돌린다.
-  // (P-03 `/portfolio` 쪽 같은 우회는 목록이 생기면서 정리됐다)
-  const detailHref = { pathname: `/portfolio/${data.slug}` };
+  // P-04 가 생겨 UrlObject 우회를 걷어내고 문자열 href 로 되돌렸다.
+  // 변수로 빼지 않고 인라인으로 두는 이유: typedRoutes 의 `href` 는 제네릭이라
+  // 변수에 담으면 추론이 풀려 `RouteImpl` 에 맞지 않는다 (실측 TS2322).
+  // 슬러그는 자연어 한글이다 — Link 가 인코딩하고 P-04 의 params 가 디코딩해 받는다.
+  // 여기서 encodeURIComponent 를 하면 이중 인코딩이 되어 404 가 난다.
   const builderText = showBuilder ? builderLabel(data.builders) : null;
   const externalLabel =
     data.linkGrade === 'none' || !data.liveUrl ? null : projectCardCopy.linkLabel[data.linkGrade];
@@ -100,7 +100,7 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
         <h3 className="font-semibold text-[length:var(--font-size-lg)] leading-[var(--leading-heading)] tracking-[var(--tracking-heading)]">
           {/* ::after 가 카드 전체를 덮어 클릭 영역이 된다 (중첩 <a> 없이) */}
           <Link
-            href={detailHref}
+            href={`/portfolio/${data.slug}`}
             className="line-clamp-2 after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             {data.title}
@@ -122,7 +122,7 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
 
           <div className="flex shrink-0 items-center gap-[var(--space-2)]">
             <Link
-              href={detailHref}
+              href={`/portfolio/${data.slug}`}
               aria-label={`${data.title} ${projectCardCopy.detail}`}
               className="relative z-1 inline-flex min-h-11 items-center whitespace-nowrap rounded-pill bg-brand px-[var(--space-4)] font-semibold text-ink-inverse text-[length:var(--font-size-sm)] hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >

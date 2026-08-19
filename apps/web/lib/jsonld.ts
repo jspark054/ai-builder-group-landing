@@ -7,7 +7,7 @@
  * insight 테이블 스키마가 확정되면 아래 입력 타입을 그쪽에 맞춰 좁힌다.
  */
 
-import { siteUrl } from '@/lib/site';
+import { siteName, siteUrl } from '@/lib/site';
 
 export interface ArticleJsonLdInput {
   slug: string;
@@ -66,6 +66,63 @@ export function articleJsonLd(article: ArticleJsonLdInput): Record<string, unkno
     ...(citations.length
       ? { citation: citations.map((c) => ({ '@type': 'CreativeWork', name: c.title, url: c.url })) }
       : {}),
+  };
+}
+
+/** P-04 프로젝트 상세 URL. 슬러그가 자연어 한글이라 인코딩이 필수다 (REQ-N-013). */
+export function projectUrl(slug: string): string {
+  return `${siteUrl}/portfolio/${encodeURIComponent(slug)}`;
+}
+
+export interface ProjectArticleJsonLdInput {
+  slug: string;
+  title: string;
+  description: string;
+  /** 대표 이미지. 사이트 루트 기준(`/images/...`) 또는 절대 URL (FN-P04-02) */
+  imageUrl: string;
+  publishedAt: string;
+  updatedAt: string;
+  /** 담당 빌더 표기명. 비면 author 를 조직 명의로 낸다 (FN-P04-07) */
+  authorNames?: readonly string[] | undefined;
+  /** 분류명. 배지에 뜨는 값 그대로다 (화면설계 §5.3) */
+  categories?: readonly string[] | undefined;
+  locale?: string | undefined;
+}
+
+/**
+ * FN-P04-10 — P-04 구조화 데이터 `Article`.
+ *
+ * `articleJsonLd()` 를 쓰지 않는 이유가 둘이다.
+ *   1) 그쪽은 `@type: 'BlogPosting'` 이고 FN-P04-10 이 요구하는 것은 `Article` 이다
+ *   2) `mainEntityOfPage` 를 `insightUrl()`(`/insights/{slug}`)로 굳혀 둬서
+ *      포트폴리오 주소를 낼 수 없다
+ * 그래서 같은 파일 안에 별도 함수를 둔다. 새 라이브러리는 도입하지 않는다.
+ *
+ * `author` — 담당 빌더가 있으면 Person 배열, 없으면 조직 명의다. 실명·닉네임 구분 없이
+ * 표기명을 그대로 싣는다 (POL-12). 이력·소개는 넣지 않는다 (POL-05).
+ */
+export function projectArticleJsonLd(project: ProjectArticleJsonLdInput): Record<string, unknown> {
+  const authorNames = project.authorNames ?? [];
+  const categories = project.categories ?? [];
+  const url = projectUrl(project.slug);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: project.title,
+    description: project.description,
+    datePublished: project.publishedAt,
+    dateModified: project.updatedAt,
+    inLanguage: project.locale ?? 'ko-KR',
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    image: [absolute(project.imageUrl)],
+    author:
+      authorNames.length > 0
+        ? authorNames.map((name) => ({ '@type': 'Person', name }))
+        : { '@type': 'Organization', name: siteName },
+    publisher: { '@type': 'Organization', name: siteName },
+    ...(categories.length ? { articleSection: categories.join(', ') } : {}),
   };
 }
 
