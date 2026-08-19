@@ -30,9 +30,8 @@
 //
 // 4) 본문 폭은 세 블록이 같은 값을 쓴다
 //    Section 이 h2 에 --layout-content 를 걸고 있으므로 children 도 같은 폭으로 맞춘다.
-//    블록 2 · 3 은 가운데 정렬(mx-auto)을 쓰지 않는다. 제목이 왼쪽 정렬이라 축이 어긋난다.
-//    블록 4 다이어그램만 사용자 지시(8/19)로 가운데 정렬한다 — 좌우 대칭 도형이라
-//    왼쪽에 붙이면 패널 안의 축과 h2 의 축이 둘 다 보여 어느 쪽도 기준이 되지 않는다.
+//    가운데 정렬(mx-auto)을 쓰지 않는 이유는 제목이 왼쪽 정렬이라 축이 어긋나기 때문이다.
+//    다이어그램 패널도 같다 — 가운데로 보내면 h2 의 왼쪽 축과 어긋난다.
 //    블록 3 본문을 Section 의 description 슬롯에 넣지 않은 것도 같은 이유다 —
 //    그 슬롯은 --layout-copy(42rem)로 고정돼 있어 혼자만 폭이 좁아진다.
 //    Section 은 P-01 과 공유하는 부품이므로 이 화면 사정으로 고치지 않는다.
@@ -59,6 +58,14 @@ export const metadata: Metadata = {
 
 /** 세 블록이 공유하는 본문 폭. Section 의 h2 와 같은 값이라 왼쪽 축이 맞는다. */
 const BLOCK_WIDTH = 'max-w-[var(--layout-content)]';
+
+/**
+ * 8단계 목록 끝의 관문 문구와 다음 블록 사이 간격을 줄인다.
+ * 관문은 이미 세로선으로 끝을 맺고 있어서 --section-block 두 겹(위·아래)이
+ * 그대로 붙으면 문장 하나가 허공에 남는다. Section 은 P-01 과 공유하는
+ * 부품이라 고치지 않고(하드 룰), 블록 안에서 아래쪽 한 겹만 당겨 상쇄한다.
+ */
+const STEPS_TRAILING_PULL = '-mb-[var(--section-block)]';
 
 export default function ProcessPage() {
   const { nodes } = organizationCopy;
@@ -89,7 +96,7 @@ export default function ProcessPage() {
             스크롤 위치 표시 때문에 이 목록만 클라이언트다 */}
         <Section id="process-steps" heading={processCopy.heading}>
           <ProcessSteps
-            className={BLOCK_WIDTH}
+            className={`${BLOCK_WIDTH} ${STEPS_TRAILING_PULL}`}
             lead={processCopy.lead}
             groups={processCopy.groups}
             gate={processCopy.gate}
@@ -116,7 +123,7 @@ export default function ProcessPage() {
                       <span className="hidden sm:inline">→</span>
                     </span>
                   )}
-                  <span className="flex-1 rounded-card border border-border bg-surface-soft px-[var(--space-5)] py-[var(--space-5)] text-center font-semibold text-[length:var(--font-size-md)]">
+                  <span className="flex-1 rounded-card border border-border px-[var(--space-5)] py-[var(--space-5)] text-center font-semibold text-ink text-[length:var(--font-size-md)]">
                     {node}
                   </span>
                 </Fragment>
@@ -129,7 +136,7 @@ export default function ProcessPage() {
             이미지 파일이 아니라 div/CSS 로 조립한다. 외부 에셋 수급을 기다리지 않는다.
             제품명·수치를 넣지 않는다 (기획안 §2-1 · POL-01) */}
         <Section id="tool" heading={toolCopy.heading}>
-          <div className={`${BLOCK_WIDTH} mx-auto rounded-panel border border-border p-[var(--space-8)]`}>
+          <div className={`${BLOCK_WIDTH} rounded-panel border border-border p-[var(--space-8)]`}>
             {/* 뿌리 — 패널 상단 중앙 */}
             <div className="flex justify-center">
               <p className="rounded-card bg-brand px-[var(--space-6)] py-[var(--space-4)] text-center font-semibold text-ink-inverse text-[length:var(--font-size-md)]">
