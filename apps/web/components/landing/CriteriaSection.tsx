@@ -22,13 +22,16 @@ import { p01Copy } from '@/content/p01-copy';
 /**
  * 섹션 4(포트폴리오)와의 이음매를 좁힌다.
  * Section 의 --section-block 이 아래·위로 두 겹 겹쳐 12rem 이 된다.
- * Section 은 P-09 와 공유하는 부품이라 고치지 않고(하드 룰), 아래쪽 한 겹만 당겨 상쇄한다.
+ * Section 은 P-09 와 공유하는 부품이라 고치지 않고(하드 룰), 아래쪽에서 당겨 상쇄한다.
  *
- * /process 의 같은 이름 상수와 값이 같지만 공용으로 끌어올리지 않는다 —
- * 어느 이음매를 좁힐지는 화면마다 판단이 다르다. 여기서는 섹션 3↔4 한 곳뿐이고,
+ * 한 겹을 다 당기면 3쌍 문답 아래 여백이 0 이 되어 다음 섹션 배경에 문장이 붙는다.
+ * **절반만 상쇄한다** — 12rem 이 9rem 이 된다. 새 토큰을 만들지 않고 calc 로 나눈다.
+ *
+ * /process 의 같은 이름 상수와 공용으로 묶지 않는다 — 어느 이음매를 얼마나 좁힐지는
+ * 화면마다 판단이 다르다(그쪽은 한 겹 전부다). 여기서는 섹션 3↔4 한 곳뿐이고,
  * 섹션 2↔3 은 그대로 둔다. 어둠에서 밝음으로 넘어가는 전환점이라 여백이 필요하다.
  */
-const TRAILING_PULL = '-mb-[var(--section-block)]';
+const TRAILING_PULL = '-mb-[calc(var(--section-block)/2)]';
 
 export function CriteriaSection() {
   return (
