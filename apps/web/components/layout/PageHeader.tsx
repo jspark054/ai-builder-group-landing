@@ -23,8 +23,14 @@ type PageHeaderProps = {
    * (디자인규칙 「한글 조판」). 한 줄이면 원소 1개짜리 배열을 넘긴다.
    */
   headingLines: readonly string[];
-  /** 제목 아래 한 문단. 화면별 카피 파일에서 넘어온다 */
-  subtitle: string;
+  /**
+   * 제목 아래 한 문단. 화면별 카피 파일에서 넘어온다.
+   *
+   * 선택이다. 확정 문구가 없는 화면(P-05)이 빈 문자열을 넘겨 빈 `<p>` 를 만드는
+   * 것보다, 문단 자체를 두지 않는 편이 낫다 — POL-02 「빈 요소를 렌더하지 않는다」.
+   * 문구가 확정되면 넘기기만 하면 된다. 기존 호출부(P-03 · P-09)는 그대로다.
+   */
+  subtitle?: string;
 };
 
 export function PageHeader({ headingLines, subtitle }: PageHeaderProps) {
@@ -39,9 +45,11 @@ export function PageHeader({ headingLines, subtitle }: PageHeaderProps) {
             </Fragment>
           ))}
         </h1>
-        <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-lg)] leading-[var(--leading-relaxed)]">
-          {subtitle}
-        </p>
+        {subtitle && (
+          <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-lg)] leading-[var(--leading-relaxed)]">
+            {subtitle}
+          </p>
+        )}
       </div>
     </section>
   );
