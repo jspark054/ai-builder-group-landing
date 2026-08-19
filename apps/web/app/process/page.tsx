@@ -45,6 +45,7 @@ import type { Metadata } from 'next';
 import { Fragment } from 'react';
 
 import { Section } from '@/components/landing/Section';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 import { ProcessSteps } from './ProcessSteps';
 import { headerCopy, organizationCopy, processCopy, toolCopy } from './p09-copy';
@@ -75,22 +76,9 @@ export default function ProcessPage() {
 
   return (
     <>
-      {/* 블록 1 — 페이지 헤더. 디자인규칙 「다른 공개 화면」: 헤더만 어둡고 본문은 밝다 */}
-      <section className="bg-canvas text-ink-inverse">
-        <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
-          <h1 className="max-w-[var(--layout-content)] font-bold text-[length:var(--font-size-display-md)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)]">
-            {headerCopy.headingLines.map((line, index) => (
-              <Fragment key={line}>
-                {index > 0 && <br />}
-                {line}
-              </Fragment>
-            ))}
-          </h1>
-          <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-lg)] leading-[var(--leading-relaxed)]">
-            {headerCopy.subtitle}
-          </p>
-        </div>
-      </section>
+      {/* 블록 1 — 페이지 헤더. 디자인규칙 「다른 공개 화면」: 헤더만 어둡고 본문은 밝다.
+          마크업은 components/layout/PageHeader.tsx 가 갖는다 (P-03 착수 시 추출) */}
+      <PageHeader headingLines={headerCopy.headingLines} subtitle={headerCopy.subtitle} />
 
       {/* 본문 세 블록은 한 덩어리로 밝게 간다. 배경을 블록마다 뒤집지 않는다 */}
       <div className="bg-surface-raised text-ink">
