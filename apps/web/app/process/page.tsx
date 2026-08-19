@@ -60,12 +60,14 @@ export const metadata: Metadata = {
 const BLOCK_WIDTH = 'max-w-[var(--layout-content)]';
 
 /**
- * 8단계 목록 끝의 관문 문구와 다음 블록 사이 간격을 줄인다.
- * 관문은 이미 세로선으로 끝을 맺고 있어서 --section-block 두 겹(위·아래)이
- * 그대로 붙으면 문장 하나가 허공에 남는다. Section 은 P-01 과 공유하는
- * 부품이라 고치지 않고(하드 룰), 블록 안에서 아래쪽 한 겹만 당겨 상쇄한다.
+ * 본문 블록 사이 이음매를 좁힌다.
+ * --section-block 이 위·아래로 두 겹 겹치면 블록 끝 문장이 허공에 남는다.
+ * Section 은 P-01 과 공유하는 부품이라 고치지 않고(하드 룰), 블록 안에서
+ * 아래쪽 한 겹만 당겨 상쇄한다.
+ *
+ * 블록 2 · 3 에만 건다. 마지막 블록(다이어그램)은 푸터와의 간격이라 그대로 둔다.
  */
-const STEPS_TRAILING_PULL = '-mb-[var(--section-block)]';
+const TRAILING_PULL = '-mb-[var(--section-block)]';
 
 export default function ProcessPage() {
   const { nodes } = organizationCopy;
@@ -96,7 +98,7 @@ export default function ProcessPage() {
             스크롤 위치 표시 때문에 이 목록만 클라이언트다 */}
         <Section id="process-steps" heading={processCopy.heading}>
           <ProcessSteps
-            className={`${BLOCK_WIDTH} ${STEPS_TRAILING_PULL}`}
+            className={`${BLOCK_WIDTH} ${TRAILING_PULL}`}
             lead={processCopy.lead}
             groups={processCopy.groups}
             gate={processCopy.gate}
@@ -106,7 +108,7 @@ export default function ProcessPage() {
         {/* 블록 3 — 역할 분리 조직 (FN-P09-04)
             인수 기준이 "구조 확인"이라 문장만으로는 부족하다. 노드와 방향을 같이 그린다 */}
         <Section id="organization" heading={organizationCopy.heading}>
-          <div className={BLOCK_WIDTH}>
+          <div className={`${BLOCK_WIDTH} ${TRAILING_PULL}`}>
             <p className="text-muted text-[length:var(--font-size-md)] leading-[var(--leading-relaxed)]">
               {organizationCopy.body}
             </p>
