@@ -33,8 +33,9 @@ export function ProblemSection() {
     <section id="problem" className="bg-canvas text-ink-inverse">
       <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
         {/* 인용과 본문이 같은 크기·굵기를 쓰도록 타이포는 이 래퍼가 한 번만 정한다.
-            둘 사이에서 달라지는 것은 색뿐이다 (FN-P01-20) */}
-        <div className="max-w-[var(--layout-content-wide)] text-[length:var(--font-size-xl)] leading-[var(--leading-body)]">
+            둘 사이에서 달라지는 것은 색뿐이다 (FN-P01-20).
+            정렬도 여기서 한 번만 건다 — 인용과 본문이 같은 축을 쓴다 */}
+        <div className="mx-auto max-w-[var(--layout-content)] text-center text-[length:var(--font-size-lg)] leading-[var(--leading-body)]">
           {/* R1 — 따옴표는 문자 그대로 포함된 문안이다 (기능명세 §4.1 카피표 v4.7).
               연한 쪽은 인용이다 */}
           <ProblemQuote className="text-subtle">{p01Copy.problem.quote}</ProblemQuote>
