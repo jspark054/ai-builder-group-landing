@@ -34,8 +34,16 @@ export function ProblemSection() {
       <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
         {/* 인용과 본문이 같은 크기·굵기를 쓰도록 타이포는 이 래퍼가 한 번만 정한다.
             둘 사이에서 달라지는 것은 색뿐이다 (FN-P01-20).
-            정렬도 여기서 한 번만 건다 — 인용과 본문이 같은 축을 쓴다 */}
-        <div className="mx-auto max-w-[var(--layout-content)] text-center text-[length:var(--font-size-lg)] leading-[var(--leading-body)]">
+            정렬도 여기서 한 번만 건다 — 인용과 본문이 같은 축을 쓴다.
+
+            크기는 `--font-size-xl`(1.5rem) 이다. `lg`(1.125rem)에서 한 단계 올렸다 (8/20).
+            상한 두 가지를 지킨다 —
+              히어로 서브카피 **이하**  → 히어로도 같은 `xl` 로 함께 올렸다 (Hero.tsx).
+                섹션 2 만 올리면 히어로보다 커져 랜딩 도입부의 위계가 뒤집힌다.
+              섹션 3 제목 **미만**      → 제목은 `2xl`(1.875rem)이라 그대로 아래에 있다.
+            사다리에 `lg`와 `2xl` 사이 토큰이 `xl` 하나뿐이라 이 값이 유일한 선택이다.
+            새 토큰을 만들지 않는다 */}
+        <div className="mx-auto max-w-[var(--layout-content)] text-center text-[length:var(--font-size-xl)] leading-[var(--leading-body)]">
           {/* R1 — 따옴표는 문자 그대로 포함된 문안이다 (기능명세 §4.1 카피표 v4.7).
               연한 쪽은 인용이다 */}
           <ProblemQuote className="text-subtle">{p01Copy.problem.quote}</ProblemQuote>

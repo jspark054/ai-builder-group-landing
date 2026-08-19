@@ -31,8 +31,13 @@ export function Hero() {
         </h1>
 
         {/* 줄바꿈은 자동 흘림에 맡기지 않고 직접 끊는다.
-            첫 줄은 SEO 키워드(FR-6.1), 둘째 줄이 주장이다. */}
-        <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-lg)] leading-[var(--leading-relaxed)]">
+            첫 줄은 SEO 키워드(FR-6.1), 둘째 줄이 주장이다.
+
+            크기는 `--font-size-xl`(1.5rem) 이다. 섹션 2 를 `lg`→`xl` 로 올리면서 함께
+            올렸다 (8/20). 섹션 2 만 올리면 문제 제기 문단이 히어로 서브카피보다 커져
+            도입부의 위계가 뒤집힌다 — 두 값을 같이 두는 것이 조건이다.
+            위쪽 h1 은 최소 30px 부터라 24px 인 이 문단과의 간격은 좁아져도 뒤집히지 않는다 */}
+        <p className="mt-[var(--space-6)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-xl)] leading-[var(--leading-relaxed)]">
           {heroCopy.subLines.map((line, index) => (
             <Fragment key={line}>
               {index > 0 && <br />}
