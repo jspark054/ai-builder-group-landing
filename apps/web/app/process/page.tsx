@@ -38,11 +38,12 @@
 //
 // 화면에 남는 숫자는 헤더 서브의 "8단계"와 단계 번호 01~08 뿐이다.
 // 둘 다 확정된 프로세스 구조이지 실적 수치가 아니므로 POL-01 대상이 아니다.
+// 블록 3 조직 노드에는 번호를 붙이지 않는다 — 붙이면 8단계와 같은 화면에서
+// 「3단계 프로세스」로 읽힌다.
 // 묶음 표기 「STEP 01–02」 는 단계 번호를 그대로 옮긴 것이다. 묶음에 별도 번호를
 // 붙이지 않는다 — 붙이는 순간 8단계가 아니라 4단계 프로세스로 읽힌다.
 
 import type { Metadata } from 'next';
-import { Fragment } from 'react';
 
 import { Section } from '@/components/landing/Section';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -111,23 +112,43 @@ export default function ProcessPage() {
               {organizationCopy.body}
             </p>
 
-            <div className="mt-[var(--space-8)] flex flex-col items-stretch gap-[var(--space-2)] sm:flex-row sm:items-center">
-              {nodes.map((node, index) => (
-                <Fragment key={node}>
-                  {index > 0 && (
-                    <span
-                      aria-hidden="true"
-                      className="text-center text-subtle text-[length:var(--font-size-xl)] leading-none sm:px-[var(--space-2)]"
+            {/* 세 칸의 무게를 같게 두면 제목이 말하는 「한 창구」가 어디인지 보이지 않는다.
+                가운데 노드(팀장)만 브랜드 테두리 + 연한 배경으로 올린다 — 순서는 그대로라
+                REQ-F-042(영업팀 → 팀장 → 기획·디자인·개발)를 유지한다.
+                화살표는 지웠다. 카드 뒤로 연결선 한 줄만 지나가게 두면 흐름이 읽히고,
+                위 8단계의 세로 레일과 방향이 부딪히지 않는다 */}
+            <div className="relative mt-[var(--space-8)] grid gap-[var(--space-4)] sm:grid-cols-3">
+              {/* 카드 뒤를 가로지르는 연결선. 카드 배경이 불투명해서 사이 여백에만 드러난다.
+                  1열로 접히면 카드가 세로로 쌓여 이 선이 가로지를 곳이 없으므로 그리지 않는다 */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-[16.6%] top-1/2 hidden h-px bg-border sm:block"
+              />
+
+              {nodes.map((node, index) => {
+                // 흐름의 가운데가 곧 창구다. 노드가 셋이라는 것은 REQ-F-042 확정값이다
+                const isHub = index === Math.floor(nodes.length / 2);
+
+                return (
+                  <div
+                    key={node}
+                    className={`relative rounded-card border px-[var(--space-5)] py-[var(--space-6)] ${
+                      isHub ? 'border-brand bg-surface-soft' : 'border-border bg-surface-raised'
+                    }`}
+                  >
+                    {/* 순서 표기(01~03)를 뒀다가 뺐다 (8/20). 바로 위 8단계 목록의 01~08 과
+                        같은 화면이라 「3단계 프로세스」로 읽힐 여지가 있었다.
+                        순서는 카드의 배치와 연결선이 이미 말한다 */}
+                    <p
+                      className={`font-bold text-[length:var(--font-size-lg)] leading-[var(--leading-heading)] ${
+                        isHub ? 'text-brand-soft' : 'text-ink'
+                      }`}
                     >
-                      <span className="sm:hidden">↓</span>
-                      <span className="hidden sm:inline">→</span>
-                    </span>
-                  )}
-                  <span className="flex-1 rounded-card border border-border px-[var(--space-5)] py-[var(--space-5)] text-center font-semibold text-ink text-[length:var(--font-size-md)]">
-                    {node}
-                  </span>
-                </Fragment>
-              ))}
+                      {node}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Section>
@@ -136,28 +157,42 @@ export default function ProcessPage() {
             이미지 파일이 아니라 div/CSS 로 조립한다. 외부 에셋 수급을 기다리지 않는다.
             제품명·수치를 넣지 않는다 (기획안 §2-1 · POL-01) */}
         <Section id="tool" heading={toolCopy.heading}>
-          <div className={`${BLOCK_WIDTH} rounded-panel border border-border p-[var(--space-8)]`}>
-            {/* 뿌리 — 패널 상단 중앙 */}
-            <div className="flex justify-center">
-              <p className="rounded-card bg-brand px-[var(--space-6)] py-[var(--space-4)] text-center font-semibold text-ink-inverse text-[length:var(--font-size-md)]">
+          {/* 트리(뿌리 + 분기선 + 가지 4칸)에서 기록부로 바꿨다 (8/20).
+              뿌리를 채운 파란 상자가 화면에서 가장 강한데 정작 읽어야 할 것은 네 항목이라
+              제목(「모든 단계는 기록으로 남습니다」)과 무게가 어긋났고, 모양이 조직도라
+              바로 위 블록 3(역할 조직)과도 겹쳐 읽혔다.
+              도구 이름을 패널 머리띠로 내리면 「이 안에 담긴다」는 관계가 선 없이 성립한다.
+              카피·순서는 그대로다 — toolCopy 를 건드리지 않았다 */}
+          <div className={`${BLOCK_WIDTH} overflow-hidden rounded-panel border border-border`}>
+            {/* 머리띠 — 도구 이름. 제품명이 아니라 「프로젝트 관리 도구」다 (기획안 §2-1) */}
+            <div className="flex items-center gap-[var(--space-3)] border-border-strong border-b bg-surface-soft px-[var(--space-6)] py-[var(--space-5)]">
+              <span aria-hidden="true" className="size-2 shrink-0 rounded-pill bg-brand" />
+              <p className="font-semibold text-brand-soft text-[length:var(--font-size-sm)] tracking-[var(--tracking-label)]">
                 {diagram.root}
               </p>
             </div>
 
-            {/* 뿌리에서 아래로 내려가는 줄기 */}
-            <span aria-hidden="true" className="mx-auto block h-[var(--space-6)] w-px bg-border-strong" />
-
-            {/* 가로 분기선. 4열일 때 첫 가지 중앙 ~ 마지막 가지 중앙이 좌우 12.5% 지점이다.
-                2열로 접히면 행이 둘로 나뉘어 이 선이 두 번째 행에 닿지 않으므로 그리지 않는다 */}
-            <span aria-hidden="true" className="mx-[12.5%] hidden h-px bg-border-strong md:block" />
-
-            {/* 가지 카드는 행에서 가장 높은 것에 맞춘다. 「단계별 검수보고서 발송」이
-                두 줄이라 혼자 튀어나오던 자리다 */}
-            <ul className="mt-[var(--space-4)] grid grid-cols-2 items-stretch gap-[var(--space-4)] md:mt-0 md:grid-cols-4">
+            {/* 항목 행. 체크 표시는 블록 2 관문 마커와 같은 도형이다 — 두 블록이 같은
+                「확인하고 남긴다」를 말한다. 여기서는 문구가 뜻을 다 갖고 있어 장식이다 */}
+            <ul>
               {diagram.branches.map((branch) => (
-                <li key={branch} className="flex h-full flex-col items-center">
-                  <span aria-hidden="true" className="hidden h-[var(--space-6)] w-px bg-border-strong md:block" />
-                  <span className="flex w-full flex-1 items-center justify-center rounded-card border border-border px-[var(--space-4)] py-[var(--space-4)] text-center text-[length:var(--font-size-base)]">
+                <li
+                  key={branch}
+                  className="flex items-center gap-[var(--space-4)] border-border border-t px-[var(--space-6)] py-[var(--space-5)] first:border-t-0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-4 shrink-0 text-brand-soft"
+                  >
+                    <path d="m5 13 4 4L19 7" />
+                  </svg>
+                  <span className="font-medium text-ink text-[length:var(--font-size-md)]">
                     {branch}
                   </span>
                 </li>
