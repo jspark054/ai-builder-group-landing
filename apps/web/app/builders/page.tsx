@@ -61,9 +61,11 @@ export const metadata: Metadata = {
   // POL-06 — 화면명이 맨 앞에 온다. absolute 로 넘기는 이유는 루트 layout 의
   // `%s | {siteName}` 템플릿을 타면 사이트명이 두 번 붙기 때문이다 (P-04 · P-06 과 동일)
   title: { absolute: `${p05Copy.header.headingLines.join(' ')} | ${p05Copy.metaTitleSuffix}` },
-  // ⚠ description 을 따로 두지 않는다. 이 화면의 확정 문구가 없고 지어내지 않는다.
-  //   루트 layout 의 사이트 설명이 그대로 쓰이는데, 그 문장이 마침 빌더를 주어로
-  //   삼고 있고 81자로 POL-06(80~110)을 충족한다. 전용 문구를 받으면 여기에 넣는다.
+  // 화면 카피가 아니라 전용 문장을 쓴다 (8/20). 헤더가 3단이 되면서 세 줄 어느 것도
+  // POL-06 의 80자에 닿지 않는다. metaDescription 은 그 세 줄을 재구성한 값이다.
+  // (종전에는 루트 layout 의 사이트 설명을 상속했다 — 이 화면이 자기 헤더 문안을
+  //  갖게 된 지금은 화면과 검색 결과가 다른 말을 하게 되어 전용 문장으로 바꿨다)
+  description: p05Copy.metaDescription,
   alternates: { canonical: absoluteUrl('/builders') },
 };
 
@@ -78,6 +80,7 @@ export default async function BuilderListPage() {
     <>
       <PageHeader
         headingLines={p05Copy.header.headingLines}
+        tagline={p05Copy.header.tagline}
         subtitle={p05Copy.header.subtitle}
       />
 

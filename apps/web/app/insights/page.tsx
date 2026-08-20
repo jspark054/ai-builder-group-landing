@@ -35,7 +35,11 @@ export const metadata: Metadata = {
 export default function InsightsPage() {
   return (
     <>
-      <PageHeader headingLines={insightsPendingCopy.headingLines} />
+      <PageHeader
+        headingLines={insightsPendingCopy.headingLines}
+        tagline={insightsPendingCopy.tagline}
+        subtitle={insightsPendingCopy.subtitle}
+      />
 
       <div className="bg-surface-raised text-ink">
         <div className="mx-auto w-full max-w-[var(--layout-container)] px-[var(--layout-gutter)] py-[var(--section-block)]">
