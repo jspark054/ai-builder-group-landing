@@ -71,13 +71,18 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
     <article className="relative flex h-full w-full flex-col overflow-hidden rounded-card border border-border bg-surface-raised text-ink">
       {/* FN-C01-01 — alt 는 등록값을 그대로 쓴다. 화면에서 만들지 않는다.
           shrink-0 이 없으면 세로 플렉스에서 눌려 비율이 무너진다 —
-          카드 높이는 행에서 가장 큰 카드가 정하는데, 눌리는 쪽은 늘 썸네일이다. */}
+          카드 높이는 행에서 가장 큰 카드가 정하는데, 눌리는 쪽은 늘 썸네일이다.
+
+          `sizes` 의 분기점은 이 카드를 쓰는 목록의 그리드와 같아야 한다 — P-01 섹션 4 ·
+          P-03 · P-06 셋 다 `md:grid-cols-2 lg:grid-cols-3` 라 768 · 1024 에서 바뀐다.
+          640 을 쓰던 때는 640~767px 에서 카드가 실제로 100vw 인데 브라우저가 50vw 로
+          골라 썸네일이 2배 저해상도로 나갔다 (8/20 수정) */}
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-surface-soft">
         <Image
           src={data.thumbnailUrl}
           alt={data.thumbnailAlt}
           fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
           className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
@@ -111,14 +116,30 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
           {data.summary}
         </p>
 
-        {/* 좌 빌더 · 우 버튼. 빌더가 없어도 좌측 칸을 남겨 버튼 위치를 고정한다.
-            2칸 그리드 + flex-wrap 이면 버튼 그룹이 카드 폭의 절반만 받아 버튼 2개가
-            줄바꿈된다. 한 줄 유지가 조건이므로 flex 한 줄 + shrink-0 으로 바꿨다.
-            버튼 높이(min-h-11)가 줄 높이를 정하므로 버튼 1개·2개 카드의 하단 줄 높이가 같다. */}
-        <div className="mt-auto flex flex-col gap-[var(--space-3)] pt-[var(--space-5)] sm:flex-row sm:items-center sm:justify-between">
-          <p className="min-w-0 truncate text-muted text-[length:var(--font-size-sm)]">
-            {builderText}
-          </p>
+        {/* 하단 2행 — 위 담당 빌더 · 아래 버튼 그룹. **전 폭에서 2행이다** (8/20).
+            좌우 1행(`sm:flex-row`)이었으나 lg 3열 구간에서 담당 빌더가 사라졌다.
+            버튼 그룹은 `whitespace-nowrap` + `shrink-0` 이라 절대 줄지 않는데,
+            3열로 바뀌는 1024px 에서 카드가 2열이던 때보다 오히려 좁아져
+            (카드 내부 301px → 259px) 빌더 칸에 11px 만 남고 전부 truncate 됐다.
+            FN-C01-04 는 담당 빌더 표기가 인수 항목이므로 폭 경쟁에서 빼낸다.
+
+            `sm:flex-row` 를 남기지 않는다 — 문제 구간(1024~1230px)이 sm 위쪽이라
+            분기를 남기면 그 구간이 다시 1행으로 돌아가 같은 압착이 재발한다.
+
+            버튼 그룹은 한 줄을 유지한다 (`flex` + `shrink-0`, wrap 없음). 2행이 되면서
+            버튼이 카드 내부 폭 전체를 받으므로 가장 좁은 1024px 카드(259px)에서도
+            버튼 2개 합계(약 230px)가 들어간다.
+            버튼 높이(min-h-11)가 아래 줄 높이를 정하므로 버튼 1개·2개 카드의 높이가 같다.
+
+            빌더가 없으면(P-06 · showBuilder=false) 줄 자체를 두지 않는다. 빈 <p> 를
+            남기면 `gap` 만 12px 더 붙는다. 버튼 줄은 `mt-auto` 로 여전히 카드 바닥에
+            붙으므로 빌더 유무가 달라도 같은 행 카드끼리 버튼 높이가 맞는다. */}
+        <div className="mt-auto flex flex-col gap-[var(--space-3)] pt-[var(--space-5)]">
+          {builderText && (
+            <p className="min-w-0 truncate text-muted text-[length:var(--font-size-sm)]">
+              {builderText}
+            </p>
+          )}
 
           <div className="flex shrink-0 items-center gap-[var(--space-2)]">
             <Link
