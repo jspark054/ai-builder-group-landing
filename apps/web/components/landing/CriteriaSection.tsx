@@ -8,7 +8,14 @@
 //              2→3 이 페이지에서 가장 큰 전환점이다 — 어둠에서 문제를 꺼내고
 //              여기서 밝게 열리며 태도가 바뀐다 (디자인규칙 「설계 의도」)
 //   인터랙션   3쌍 문답만 순차 등장 → components/landing/CriteriaList.tsx.
-//              제목·서브는 움직이지 않는다
+//              제목은 움직이지 않는다
+//
+// 부제(Section 의 description)를 넘기지 않는다 — 기능명세 §4.1 카피표에 섹션 3 부제
+// 행이 없고 화면설계 §5.1 도면도 제목 바로 아래에 3쌍 문답을 붙인다 (8/20).
+// Section 은 description 이 없으면 그 <p> 를 통째로 렌더하지 않으므로 껍데기는 고치지 않는다.
+//
+// 제목은 한 줄이다. 줄바꿈을 문안에 넣지 않으므로 h2 에 거는 별도 클래스도 없다 —
+// 전역 `word-break: keep-all` 이 어절 중간을 끊지 않는다 (8/20).
 //
 // 미구현 — 기능명세 v4.x 의 FN-P01-25(좌 텍스트·우 미디어 2단 고정) ·
 // FN-P01-32(「동영상 예정」 라벨) · FN-P01-34(디졸브 교체)는 이번 범위에 넣지 않았다.
@@ -38,7 +45,6 @@ export function CriteriaSection() {
     <Section
       id="criteria"
       heading={p01Copy.criteria.heading}
-      description={p01Copy.criteria.description}
       className="bg-surface-raised text-ink"
     >
       <div className={TRAILING_PULL}>

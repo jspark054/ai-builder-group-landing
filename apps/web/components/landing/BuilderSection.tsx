@@ -20,12 +20,12 @@
 // 서버 컴포넌트다. getBuilderCards() 는 service role 로 읽으므로
 // 클라이언트에서 부르면 안 된다 (lib/queries/builder-cards.ts 머리말 참조).
 //
-// 인터랙션은 넣지 않는다. 섹션 2·3·7 을 붙일 때 한 번에 배치한다
-// (FN-P01-02 인접 섹션 상이 조건 때문).
+// 인터랙션은 목록의 좌→우 stagger 하나다 (8/20 신설 — components/landing/BuilderGrid.tsx).
+// 5 가 0건이면 6(의도적 공백)과 붙어 인접 두 섹션이 같아진다 — FN-P01-02 위반이었다.
 
 import Link from 'next/link';
 
-import { BuilderCard } from '@/components/cards/builder-card';
+import { BuilderGrid } from '@/components/landing/BuilderGrid';
 import { Section } from '@/components/landing/Section';
 import { PlaceholderNotice } from '@/components/PlaceholderNotice';
 import { placeholderNoticeCopy } from '@/content/component-copy';
@@ -53,16 +53,8 @@ export async function BuilderSection() {
         <PlaceholderNotice text={placeholderNoticeCopy.builder} />
       </div>
 
-      {/* FN-P01-35 — 한 줄 6명. 12명이면 자연히 2줄이 된다.
-          FN-P01-26 이 전원 노출이므로 slice 로 상한을 두지 않는다.
-          ("인원 증가 시 페이지 길이 불변"을 요구하던 FN-P01-06 은 v4.0 이 뒤집었다) */}
-      <ul className="grid grid-cols-3 gap-[var(--space-6)] md:grid-cols-4 lg:grid-cols-6">
-        {builders.map((builder) => (
-          <li key={builder.slug} className="flex">
-            <BuilderCard data={builder} variant="p01" />
-          </li>
-        ))}
-      </ul>
+      {/* 목록과 그 인터랙션은 BuilderGrid 가 갖는다 (그 파일 머리말에 근거를 적어 뒀다) */}
+      <BuilderGrid builders={builders} />
 
       <div className="mt-[var(--space-10)]">
         {/* P-05(/builders)가 아직 없어 typedRoutes 가 문자열 href 를 거부한다.

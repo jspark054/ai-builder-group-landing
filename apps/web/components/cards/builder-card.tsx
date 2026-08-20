@@ -73,14 +73,27 @@ type BuilderCardProps = {
 const FOCUS_RING =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 
-/** 두 variant 가 공유하는 뼈대. 세로 플렉스 · 가운데 정렬 · 터치 영역 하한 */
-const FRAME_BASE = `flex h-full min-h-11 w-full flex-col items-center text-center text-ink ${FOCUS_RING}`;
+/**
+ * 두 variant 가 공유하는 뼈대. 세로 플렉스 · 가운데 정렬 · 터치 영역 하한.
+ *
+ * `h-full` 은 여기에 두지 않는다 — variant 마다 필요 여부가 갈린다.
+ * 칸을 끝까지 채워야 하는 쪽은 아래에서 각자 붙인다.
+ */
+const FRAME_BASE = `flex min-h-11 w-full flex-col items-center text-center text-ink ${FOCUS_RING}`;
 
 const FRAME_CLASS: Record<BuilderCardVariant, string> = {
-  // C-02 기본형 — 박스가 카드 경계를 만든다
-  p05: `${FRAME_BASE} rounded-card border border-border bg-surface-raised p-[var(--space-6)] hover:border-brand`,
+  // C-02 기본형 — 박스가 카드 경계를 만든다.
+  // `h-full` 로 칸을 채운다. 박스가 보이는 쪽이라 높이가 들쭉날쭉하면 바로 드러나고,
+  // 담당 건수 줄이 `mt-auto` 로 바닥에 붙어야 해서 채울 높이가 실제로 필요하다
+  p05: `${FRAME_BASE} h-full rounded-card border border-border bg-surface-raised p-[var(--space-6)] hover:border-brand`,
   // FN-P01-29 — 외부 박스 없음. 테두리·배경 모두 두지 않는다.
-  // 경계가 없으므로 호버는 표기명 색 이동으로 알린다 (POL-11①-2 · 모션 없이)
+  // 경계가 없으므로 호버는 표기명 색 이동으로 알린다 (POL-11①-2 · 모션 없이).
+  //
+  // `h-full` 을 빼 둔다 (8/20). 이 variant 는 showDetails 가 false 라
+  // `mt-auto` 를 받을 담당 건수 줄이 없다. 그 상태에서 칸을 끝까지 늘리면
+  // 표기명 아래가 빈 채로 남고, 그 빈 자리까지 링크의 클릭·호버 영역이 된다 —
+  // 보이는 것은 원과 이름뿐인데 눌리는 범위가 그보다 아래까지 내려간다.
+  // 칸 자체는 바깥 article 이 채우므로 그리드 행 높이는 그대로다
   p01: `${FRAME_BASE} py-[var(--space-2)] hover:text-brand`,
 };
 

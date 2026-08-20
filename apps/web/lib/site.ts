@@ -8,7 +8,18 @@
  * 크래시가 되지 않는다.
  */
 
-export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+/**
+ * 절대경로의 단일 기준. sitemap · robots · canonical · OG · JSON-LD 가 모두 이 값을 쓴다.
+ *
+ * 폴백을 **배포 도메인**으로 둔다. `http://localhost:3000` 을 폴백으로 두면
+ * 환경변수가 주입되지 않은 빌드에서 sitemap·canonical 이 조용히 localhost 로 나가고,
+ * 그 상태로 배포되면 색인기가 도달할 수 없는 주소를 받는다 — 실제로 그렇게 나가고
+ * 있었다 (8/20). 로컬에서 절대경로가 배포 도메인으로 찍히는 쪽이,
+ * 배포본이 localhost 를 가리키는 쪽보다 안전하다.
+ */
+const FALLBACK_SITE_URL = 'https://abg-landing-jspark.vercel.app';
+
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || FALLBACK_SITE_URL).replace(/\/$/, '');
 
 export const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? 'SITE_NAME_NOT_SET';
 

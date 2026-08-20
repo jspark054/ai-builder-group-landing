@@ -41,9 +41,11 @@ export const metadata: Metadata = {
     ...(googleVerification ? { google: googleVerification } : {}),
     ...(bingVerification ? { other: { 'msvalidate.01': bingVerification } } : {}),
   },
+  // RSS 선언을 두지 않는다 (8/20). `/rss.xml` 을 만든 적이 없어 죽은 참조였고,
+  // 인사이트 발행 글이 0건이라 지금 피드를 만들 내용도 없다.
+  // P-12 에 첫 글이 들어올 때 피드 라우트와 함께 되살린다.
   alternates: {
     canonical: siteUrl,
-    types: { 'application/rss+xml': `${siteUrl}/rss.xml` },
   },
   robots: {
     index: true,
