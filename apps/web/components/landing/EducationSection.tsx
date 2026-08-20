@@ -26,6 +26,24 @@ import { Fragment } from 'react';
 import { Section } from '@/components/landing/Section';
 import { p01Copy } from '@/content/p01-copy';
 
+/**
+ * 본문을 children 으로 옮기면서 생긴 간격 차이를 되돌린다.
+ * Section 은 children 앞에 `--space-10`(2.5rem)을 두고, description 슬롯은
+ * h2 바로 아래 `--space-4`(1rem)에 놓인다. 그 차이만큼만 당긴다.
+ *
+ * 제목 아래 첫 문단의 간격은 `--space-4` 가 기준이다 — 섹션 4 · 5 · 8 은
+ * description 슬롯을 써서 그 값을 그대로 받고, 섹션 7 은 같은 이유로 같은 보정을
+ * 하고 있다 (ProcessSection.tsx 의 SUBTITLE_PULL). **이 섹션만 2.5rem 이라
+ * 혼자 벌어져 있었다** (8/20 수정 — 실화면에서 확인됨).
+ *
+ * 섹션 3(CriteriaSection)에는 이 보정을 넣지 않는다. 그쪽 children 은 문단이 아니라
+ * 3행 목록이고, 제목-본문 블록 간격은 `--space-10` 이 맞다.
+ *
+ * Section 은 P-09 와 공유하는 부품이라 고치지 않는다 (하드 룰).
+ * 새 토큰을 만들지 않고 기존 두 값의 차로 계산한다.
+ */
+const BODY_PULL = '-mt-[calc(var(--space-10)-var(--space-4))]';
+
 export function EducationSection() {
   return (
     <Section
@@ -33,7 +51,9 @@ export function EducationSection() {
       heading={p01Copy.education.heading}
       className="bg-canvas text-ink-inverse"
     >
-      <p className="max-w-[var(--layout-content)] text-subtle text-[length:var(--font-size-md)] leading-[var(--leading-relaxed)]">
+      <p
+        className={`${BODY_PULL} max-w-[var(--layout-content)] text-subtle text-[length:var(--font-size-md)] leading-[var(--leading-relaxed)]`}
+      >
         {p01Copy.education.bodyLines.map((line, index) => (
           <Fragment key={line}>
             {index > 0 && <br />}
