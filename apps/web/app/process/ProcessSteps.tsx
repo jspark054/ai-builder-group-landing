@@ -123,6 +123,9 @@ export function ProcessSteps({ lead, groups, gate, className }: ProcessStepsProp
 
   return (
     <div className={className}>
+      {/* 관문이 여덟 곳에 흩어져 있으므로 규칙을 목록 머리에 한 번 밝힌다.
+          잠깐 개요 블록으로 옮겼다가 되돌렸다 (8/20) — 그 블록이 P-01 섹션 7 과
+          중복이 되어 사라졌고, 이 문장은 목록의 전제라 목록과 함께 있어야 한다 */}
       <p className="text-base text-muted leading-[var(--leading-relaxed)]">{lead}</p>
 
       <ol ref={listRef} className="mt-[var(--space-8)]">
@@ -137,7 +140,11 @@ export function ProcessSteps({ lead, groups, gate, className }: ProcessStepsProp
               {/* 묶음 경계의 관문 — 02↔03 · 04↔05 · 06↔07. 문구가 붙는 자리다 */}
               {groupIndex > 0 && <Gate label={gate.label} note={group.entryNote} />}
 
-              {/* 묶음 머리글. 단계 라벨보다 작고, 스크롤 강조 대상이 아니다 */}
+              {/* 묶음 머리글. 단계 라벨보다 작고, 스크롤 강조 대상이 아니다.
+                  STEP 라벨 · 이름 · summary 세 줄이다. 잠깐 summary 를 뺐다가
+                  되돌렸다 (8/20) — 뺀 이유가 개요 블록과의 중복이었는데 그 블록이
+                  사라졌다. 이제 이 화면에서 묶음을 설명하는 곳은 여기뿐이다.
+                  P-01 섹션 7 이 같은 4묶음을 갖지만 그건 다른 화면이라 중복이 아니다 */}
               <div className={groupIndex > 0 ? 'mt-[var(--space-4)]' : undefined}>
                 <p className="font-semibold text-subtle text-[length:var(--font-size-xs)] tracking-[var(--tracking-label)]">
                   {group.eyebrow}

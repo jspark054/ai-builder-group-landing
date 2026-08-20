@@ -83,7 +83,12 @@ export default function ProcessPage() {
       {/* 본문 세 블록은 한 덩어리로 밝게 간다. 배경을 블록마다 뒤집지 않는다 */}
       <div className="bg-surface-raised text-ink">
         {/* 블록 2 — 8단계 프로세스 (FN-P09-02 · FN-P09-03)
-            스크롤 위치 표시 때문에 이 목록만 클라이언트다 */}
+            스크롤 위치 표시 때문에 이 목록만 클라이언트다.
+
+            잠깐 4묶음 개요 블록을 이 위에 두고 제목·리드를 좌우 2단으로 놓느라
+            Section 대신 <section> 을 직접 썼다가 되돌렸다 (8/20) — 개요가 P-01 섹션 7 과
+            중복이 되어 제거됐고, 남은 것이 제목 + 리드 + 목록이라 Section 의 모양과
+            정확히 같다. 블록 3 · 4 와 구조를 하나로 유지한다 */}
         <Section id="process-steps" heading={processCopy.heading}>
           <ProcessSteps
             className={`${BLOCK_WIDTH} ${TRAILING_PULL}`}
