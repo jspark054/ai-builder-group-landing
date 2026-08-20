@@ -58,8 +58,9 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   // POL-06 — 40자 이내 · 핵심 키워드가 앞 15자 이내
   title: p03Copy.metaTitle,
-  // 새 문장을 만들지 않고 화면 서브카피를 그대로 쓴다 (POL-06 길이 · POL-13 카피 확정)
-  description: p03Copy.header.subtitle,
+  // 화면 카피가 아니라 전용 문장을 쓴다 (8/20). 헤더가 3단이 되면서 세 줄 어느 것도
+  // POL-06 의 80자에 닿지 않는다. metaDescription 은 그 세 줄을 재구성한 값이다
+  description: p03Copy.metaDescription,
   alternates: { canonical: '/portfolio' },
 };
 
@@ -71,6 +72,7 @@ export default async function PortfolioListPage() {
     <>
       <PageHeader
         headingLines={p03Copy.header.headingLines}
+        tagline={p03Copy.header.tagline}
         subtitle={p03Copy.header.subtitle}
       />
 

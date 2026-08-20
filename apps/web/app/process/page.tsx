@@ -52,8 +52,9 @@ import { headerCopy, organizationCopy, processCopy, toolCopy } from './p09-copy'
 
 export const metadata: Metadata = {
   title: '일하는 방식',
-  // 새 문장을 만들지 않고 화면 서브카피를 그대로 쓴다 (POL-06 길이 · POL-13 카피 확정).
-  description: headerCopy.subtitle,
+  // 화면 카피가 아니라 전용 문장을 쓴다 (8/20). 헤더가 3단이 되면서 세 줄 어느 것도
+  // POL-06 의 80자에 닿지 않는다. metaDescription 은 그 세 줄을 재구성한 값이다
+  description: headerCopy.metaDescription,
   alternates: { canonical: '/process' },
 };
 
@@ -78,7 +79,11 @@ export default function ProcessPage() {
     <>
       {/* 블록 1 — 페이지 헤더. 디자인규칙 「다른 공개 화면」: 헤더만 어둡고 본문은 밝다.
           마크업은 components/layout/PageHeader.tsx 가 갖는다 (P-03 착수 시 추출) */}
-      <PageHeader headingLines={headerCopy.headingLines} subtitle={headerCopy.subtitle} />
+      <PageHeader
+        headingLines={headerCopy.headingLines}
+        tagline={headerCopy.tagline}
+        subtitle={headerCopy.subtitle}
+      />
 
       {/* 본문 세 블록은 한 덩어리로 밝게 간다. 배경을 블록마다 뒤집지 않는다 */}
       <div className="bg-surface-raised text-ink">
