@@ -65,12 +65,14 @@ const DURATION = { projects: '72s', phrases: '48s' } as const;
  * 한 벌 안에서 내용을 몇 번 되풀이할지 (Marquee 머리말 참조).
  * **한 벌 폭 ≥ 화면 폭** 이어야 띠 끝에 빈틈이 안 생긴다.
  *
- * 실측 한 벌 폭 (8/21) — 프로젝트 5건 930px · 문구 2건 725px.
- * 아래 값이면 각각 2790px · 2900px 이 되어 2560px 모니터까지 덮는다.
- * 프로젝트나 문구가 늘면 한 벌이 저절로 넓어지므로 이 값을 줄여도 되지만,
- * 되풀이는 같은 URL 이라 이미지 요청이 늘지 않는다. 굳이 조이지 않는다.
+ * 실측 한 바퀴 폭 (8/21) — 프로젝트 5건 930px · 문구 4건 1524px.
+ * 아래 값이면 한 벌이 각각 2790px · 3048px 이 되어 2560px 모니터까지 덮는다.
+ * 둘 다 이보다 한 단계 줄이면 2560 에서 빈틈이 난다 (930×2=1860 · 1524×1=1524).
+ *
+ * 문구가 2건이던 때는 한 바퀴가 725px 라 4회 되풀이가 필요했다. 2건이 더 들어와
+ * 한 바퀴가 배로 넓어지면서 2회로 줄었다 — 문구가 늘면 이 값은 내려간다.
  */
-const REPEAT = { projects: 3, phrases: 4 } as const;
+const REPEAT = { projects: 3, phrases: 2 } as const;
 
 export async function ProblemSection() {
   // 섹션 4 와 같은 쿼리다. 같은 데이터를 두 번 읽지만 요청 단위로 캐시되고,
@@ -163,11 +165,9 @@ export async function ProblemSection() {
             className="shrink-0 whitespace-nowrap font-semibold text-subtle text-[length:var(--font-size-sm)] tracking-[var(--tracking-label)]"
           >
             {phrase}
-            {/* 간격을 `--space-24`(6rem)로 크게 벌린다. 문구가 2건뿐이라 좁게 붙이면
-                한 벌이 437px 밖에 안 되고 1440px 화면에 같은 말이 3.3번 동시에 보인다
-                (실측 8/21). 간격을 벌리면 2번으로 줄어든다.
-                **근본 해결은 문구를 늘리는 것이다** — p01-copy.ts 의 배열에 항목을
-                더하면 되고, 그 판단은 발주사·사용자 몫이라 여기서 지어내지 않는다 */}
+            {/* 간격은 `--space-24`(6rem) 다. 문구가 2건이던 때 한 바퀴가 437px 밖에
+                안 돼 같은 말이 한 화면에 3.3번 보여서 벌린 값이고, 4건이 된 뒤에도
+                그대로 둔다 — 대문자 라틴이 촘촘하면 띠가 답답해 보인다 (실측 8/21) */}
             <span aria-hidden="true" className="mx-[var(--space-24)]">
               ·
             </span>
