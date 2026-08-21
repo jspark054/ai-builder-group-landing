@@ -76,15 +76,24 @@ export function ProjectCard({ data, showBuilder = true }: ProjectCardProps) {
           `sizes` 의 분기점은 이 카드를 쓰는 목록의 그리드와 같아야 한다 — P-01 섹션 4 ·
           P-03 · P-06 셋 다 `md:grid-cols-2 lg:grid-cols-3` 라 768 · 1024 에서 바뀐다.
           640 을 쓰던 때는 640~767px 에서 카드가 실제로 100vw 인데 브라우저가 50vw 로
-          골라 썸네일이 2배 저해상도로 나갔다 (8/20 수정) */}
-      <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-surface-soft">
-        <Image
-          src={data.thumbnailUrl}
-          alt={data.thumbnailAlt}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+          골라 썸네일이 2배 저해상도로 나갔다 (8/20 수정)
+
+          매트 — 썸네일을 카드 폭에 꽉 채우지 않고 색 여백으로 액자화한다 (8/21).
+          색은 `border-strong`(= --primitive-blue-100 #d4e3fe) 이다.
+          `surface-soft`(#ecf3ff) 를 쓰면 안 된다 — P-01 섹션 4 배경이 그 값이라
+          그 화면에서 매트가 사라진다. 등록 썸네일 5건의 비율이 1.44~2.12 로 제각각이라
+          안쪽 상자는 16:10 + object-cover 를 유지한다. object-contain 으로 바꾸면
+          매트 두께가 카드마다 달라져 행이 어긋난다 */}
+      <div className="shrink-0 bg-border-strong p-[var(--space-4)]">
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card bg-surface-raised">
+          <Image
+            src={data.thumbnailUrl}
+            alt={data.thumbnailAlt}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-[var(--space-5)]">
