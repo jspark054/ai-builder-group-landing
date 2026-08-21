@@ -240,16 +240,26 @@ export default async function ProjectDetailPage({
       <div className="bg-surface-raised text-ink">
         <div className={`${CONTAINER} py-[var(--section-block)]`}>
           {/* FN-P04-02 — 대표 이미지. alt 는 등록값을 그대로 쓴다. 화면에서 만들지 않는다.
-              썸네일은 16:10(1200×750)으로 등록된다 — 카드와 같은 비율이라 잘리지 않는다 */}
-          <div className="relative aspect-[16/10] w-full max-w-[var(--layout-content-wide)] overflow-hidden rounded-card border border-border bg-surface-soft">
-            <Image
-              src={project.thumbnailUrl}
-              alt={project.thumbnailAlt}
-              fill
-              priority
-              sizes="(min-width: 1024px) 56rem, 100vw"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+              등록 썸네일 5건의 비율은 1.44~2.12 로 제각각이다 (16:10 로 통일돼 있지 않다).
+              16:10 상자 + object-cover 라 크롭이 생기지만, C-01 카드와 같은 규칙이므로
+              목록에서 보던 잘림새가 상세에서도 그대로 이어진다.
+
+              매트 — C-01 과 같은 처리다 (8/21). 색은 `border-strong`
+              (= --primitive-blue-100 #d4e3fe). `surface-soft`(#ecf3ff) 를 쓰면 안 된다 —
+              P-01 섹션 4 배경이 그 값이라 카드 쪽에서 매트가 사라진다.
+              패딩만 카드(--space-4)보다 크다. 이 이미지는 폭 896px 이라 16px 을 두면
+              매트가 테두리처럼 보인다. 32px 이 카드의 매트 비율(약 4%)과 맞는 값이다 */}
+          <div className="w-full max-w-[var(--layout-content-wide)] overflow-hidden rounded-card border border-border bg-border-strong p-[var(--space-8)]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-card bg-surface-raised">
+              <Image
+                src={project.thumbnailUrl}
+                alt={project.thumbnailAlt}
+                fill
+                priority
+                sizes="(min-width: 1024px) 56rem, 100vw"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </div>
           </div>
 
           {/* FN-P04-06 · FN-COM-04 — 외부 링크는 새 탭 · rel="noopener".
