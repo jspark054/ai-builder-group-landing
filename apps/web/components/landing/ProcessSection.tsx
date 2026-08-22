@@ -26,8 +26,13 @@
 //   링크는 여전히 섹션 안 한 곳뿐이고 자리만 목록 아래에서 부제 아래로 옮겼다 —
 //   FN-P01-10 이 요구하는 것은 이동 경로의 존재이지 그 위치가 아니다.
 //
-// 화면에 남는 숫자는 제목의 "8단계"와 STEP 번호뿐이다. 둘 다 확정된 프로세스
-// 구조이지 실적 수치가 아니므로 POL-01 대상이 아니다 (P-09 도 같은 판단을 적어 뒀다).
+// 화면에 남는 숫자는 STEP 번호뿐이다. 확정된 프로세스 구조이지 실적 수치가
+// 아니므로 POL-01 대상이 아니다 (P-09 도 같은 판단을 적어 뒀다).
+//
+// **제목·부제가 8/22 에 사용자 지시 문안으로 바뀌었다** (content/p01-copy.ts 참조).
+// 제목은 배열이라 Section 이 줄을 그대로 끊는다 — 왼쪽 열이 446px 이라 흘려 쓰면
+// 3줄 문안이 2줄로 접힌다. 종전 제목은 P-09 블록 2 제목과 같은 문장이었고
+// 지금은 갈라져 있다.
 //
 // 링크 색 — 어두운 배경 위에서는 `text-brand`(#1b64da)가 bg-canvas(#15140f) 대비
 // 3:1 에 못 미친다. 섹션 4·5 의 브랜드색 링크를 그대로 옮겨오지 않고, 헤더·푸터가
@@ -49,7 +54,7 @@ export function ProcessSection() {
   return (
     <Section
       id="process"
-      heading={p01Copy.process.heading}
+      heading={p01Copy.process.headingLines}
       layout="split"
       className="bg-canvas text-ink-inverse"
       aside={

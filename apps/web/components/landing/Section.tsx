@@ -16,13 +16,22 @@
 // 모션은 넣지 않는다. 섹션별 인터랙션은 1·8 을 비워두는 배치라
 // (POL-11①-2 · 디자인규칙 「P-01 섹션별 인터랙션」) 껍데기가 일괄로 걸면 전 섹션에 깔린다.
 
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 type SectionProps = {
   /** 앵커이자 제목 id 의 뿌리. 섹션마다 고유해야 한다 */
   id: string;
-  /** h2 제목. 문구는 content/p01-copy.ts 에서 넘어온다 */
-  heading: string;
+  /**
+   * h2 제목. 문구는 화면별 카피 파일에서 넘어온다.
+   *
+   * **배열을 넘기면 그 자리에서 줄을 끊는다** (8/22 · 사용자 지시 — P-01 섹션 7).
+   * Hero · PageHeader 의 `headingLines` 와 같은 방식이다. 문자열을 넘기면 종전대로
+   * 자동 흘림에 맡기므로 나머지 호출부는 그대로다.
+   *
+   * 디자인규칙 「한글 조판」은 직접 끊는 제목을 히어로로 한정하지만, 섹션 7 은
+   * 좌우 2단의 좁은 열(446px)에 놓여 자동 흘림이 3줄 문안을 2줄로 접는다
+   */
+  heading: string | readonly string[];
   /** 제목 아래 설명. 없는 섹션도 있다 */
   description?: string;
   /** 배경·글자색 — P-01 배경 리듬표의 해당 행 값을 호출부가 넘긴다 */
@@ -94,7 +103,14 @@ export function Section({
         id={headingId}
         className="max-w-[var(--layout-content)] font-bold text-[length:var(--font-size-2xl)] leading-[var(--leading-heading)] tracking-[var(--tracking-heading)]"
       >
-        {heading}
+        {typeof heading === 'string'
+          ? heading
+          : heading.map((line, index) => (
+              <Fragment key={line}>
+                {index > 0 && <br />}
+                {line}
+              </Fragment>
+            ))}
       </h2>
 
       {description && (
