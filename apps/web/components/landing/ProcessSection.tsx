@@ -8,18 +8,24 @@
 //              8단계 전체는 P-09(/process)에 그대로 남아 있고 아래 링크가 그 경로다.
 //              발주사 승인이 필요한 항목이다 — 되돌릴 때는 content/p01-copy.ts 의
 //              groups 와 components/landing/ProcessGrid.tsx 를 함께 본다.
-//              (인수 기준이 8단계를 한 화면에 요구하는데 모바일에서 세로로 4행이
-//               되어 그 조건이 성립하지 않던 것이 이 결정의 배경이다)
+//              **8/21 에 배치가 한 번 더 벌어졌다** — 4묶음이 4열에서 세로 나열이 됐고,
+//              8/22 에 그 행의 짜임을 섹션 3 과 같게 맞췄다 (사용자 지시)
 //   FN-P01-10  이 섹션에서 P-09(/process)로 이동하는 링크를 제공한다.
 //              4묶음만 남은 지금은 이 링크가 8단계로 가는 **유일한** 경로다. 지우지 않는다
 //   FN-P01-13  아이브로우 라벨 없음. 제목 위에 보조 라벨을 두지 않는다
 //   배경 리듬  7 일하는 방식 = bg-canvas · text-ink-inverse (「어둠 ②」 구간).
 //              섹션 6 과 같은 값이다 — 두 섹션 사이에 배경 전환을 두지 않는다.
 //              전환은 2→3 · 5→6 · 7→8 세 번뿐이고, 여기서 한 번 더 뒤집으면 리듬이 깨진다
-//   인터랙션   카드 사이 연결선이 그려진다 → components/landing/ProcessGrid.tsx.
+//   인터랙션   행 아래 구분선이 그려진다 → components/landing/ProcessGrid.tsx.
 //              제목·부제·링크는 움직이지 않는다
 //
-// 화면에 남는 숫자는 제목의 "8단계"와 칸 번호 01~08 뿐이다. 둘 다 확정된 프로세스
+// **좌 제목 · 우 4묶음 2단이 됐다 (8/21 · 사용자 지시).**
+//   제목 · 부제 · P-09 링크가 왼쪽 열에 한 덩어리로 모이고, 오른쪽 열이 4묶음을 갖는다.
+//   Section 의 layout='split' 이 lg 이상에서 5:7 로 나누고 lg 미만에서는 접는다.
+//   링크는 여전히 섹션 안 한 곳뿐이고 자리만 목록 아래에서 부제 아래로 옮겼다 —
+//   FN-P01-10 이 요구하는 것은 이동 경로의 존재이지 그 위치가 아니다.
+//
+// 화면에 남는 숫자는 제목의 "8단계"와 STEP 번호뿐이다. 둘 다 확정된 프로세스
 // 구조이지 실적 수치가 아니므로 POL-01 대상이 아니다 (P-09 도 같은 판단을 적어 뒀다).
 //
 // 링크 색 — 어두운 배경 위에서는 `text-brand`(#1b64da)가 bg-canvas(#15140f) 대비
@@ -29,7 +35,8 @@
 // 부제를 Section 의 description 슬롯에 넣지 않는다. 그 슬롯은 `text-muted` 를 고정으로
 // 갖는데 그 값(#5e5a50)은 bg-canvas 위에서 대비가 3:1 에 못 미쳐 읽히지 않는다
 // (ProblemSection.tsx 와 같은 판단 — 어두운 배경 위의 연한 글자는 `text-subtle` 이 맡는다).
-// Section 은 P-09 와 공유하는 부품이라 고치지 않고(하드 룰), 부제를 children 으로 옮겼다.
+// 대신 aside 슬롯에 부제와 링크를 직접 그려 넘긴다. 제목과의 간격 `--space-4` 는
+// description 슬롯이 쓰는 값과 같게 맞췄다 — 밝은 섹션(4·5)과 제목-부제 간격이 같아진다.
 
 import Link from 'next/link';
 
@@ -37,47 +44,43 @@ import { ProcessGrid } from '@/components/landing/ProcessGrid';
 import { Section } from '@/components/landing/Section';
 import { p01Copy } from '@/content/p01-copy';
 
-/**
- * 부제를 children 으로 옮기면서 생긴 간격 차이를 되돌린다.
- * Section 은 children 앞에 `--space-10`(2.5rem)을 두고, description 슬롯은
- * h2 바로 아래 `--space-4`(1rem)에 놓인다. 그 차이만큼만 당겨 밝은 섹션(4·5)과
- * 제목-부제 간격을 같게 맞춘다. 새 토큰을 만들지 않고 기존 두 값의 차로 계산한다.
- */
-const SUBTITLE_PULL = '-mt-[calc(var(--space-10)-var(--space-4))]';
-
 export function ProcessSection() {
   return (
-    <Section id="process" heading={p01Copy.process.heading} className="bg-canvas text-ink-inverse">
-      <p
-        className={`${SUBTITLE_PULL} max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-md)] leading-[var(--leading-relaxed)]`}
-      >
-        {p01Copy.process.description}
-      </p>
+    <Section
+      id="process"
+      heading={p01Copy.process.heading}
+      layout="split"
+      className="bg-canvas text-ink-inverse"
+      aside={
+        <>
+          <p className="mt-[var(--space-4)] max-w-[var(--layout-copy)] text-subtle text-[length:var(--font-size-md)] leading-[var(--leading-relaxed)]">
+            {p01Copy.process.description}
+          </p>
 
-      <div className="mt-[var(--space-10)]">
-        <ProcessGrid groups={p01Copy.process.groups} />
-      </div>
-
-      <div className="mt-[var(--space-10)]">
-        <Link
-          href="/process"
-          className="inline-flex min-h-11 items-center gap-[var(--space-2)] font-semibold text-ink-inverse text-[length:var(--font-size-md)] hover:text-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-inverse"
-        >
-          {p01Copy.process.moreLabel}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-4"
-          >
-            <path d="m9 18 6-6-6-6" />
-          </svg>
-        </Link>
-      </div>
+          <div className="mt-[var(--space-8)]">
+            <Link
+              href="/process"
+              className="inline-flex min-h-11 items-center gap-[var(--space-2)] font-semibold text-ink-inverse text-[length:var(--font-size-md)] hover:text-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-inverse"
+            >
+              {p01Copy.process.moreLabel}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="size-4"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </Link>
+          </div>
+        </>
+      }
+    >
+      <ProcessGrid groups={p01Copy.process.groups} />
     </Section>
   );
 }
