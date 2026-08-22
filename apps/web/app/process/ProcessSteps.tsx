@@ -2,17 +2,23 @@
 
 // P-09 블록 2 — 8단계 프로세스 목록
 //
+// **8/22 에 배치가 바뀌었다 (목업 `abg_complete_final_v2_home_and_detail.html`).**
+//   종전   카드 8장을 세로로 쌓고 카드 사이에 관문 마커를 끼웠다
+//   현재   묶음마다 **좌 묶음 칸 · 우 단계 레일** 2단이다. 레일은 세로선 하나이고
+//          단계마다 점이 얹힌다. 관문 문구는 묶음 칸으로 옮겨 갔다
+//
 // 이 화면에서 클라이언트가 되는 유일한 조각이다. 스크롤 위치에 따라 현재 단계만
 // 강조하려면 IntersectionObserver 가 필요하고, 그 범위를 이 목록으로 가둔다.
-// 나머지 블록(헤더 · 조직 · 다이어그램)은 서버 컴포넌트로 남는다.
+// 나머지 블록(헤더 · 조직)은 서버 컴포넌트로 남는다.
 // 마크업은 SSR 로 그대로 나가므로 REQ-N-001(콘텐츠를 담은 HTML) 은 유지된다.
 //
-// POL-11①-2 — 강조를 거는 곳은 단계 카드뿐이다. 묶음 머리글 · 관문 · 조직 블록 ·
-// 다이어그램 블록은 비워 둔다. 묶음이 순차로 반응하면 8단계가 아니라
-// 4단계 프로세스처럼 읽힌다.
+// POL-11①-2 — 강조를 거는 곳은 단계 행뿐이다. 묶음 칸 · 관문 · 조직 블록은 비워 둔다.
+// 묶음이 순차로 반응하면 8단계가 아니라 4단계 프로세스처럼 읽힌다.
+// 강조는 점과 글자색까지다. 위치와 크기를 건드리지 않으므로 등장 애니메이션이 아니라
+// 현재 위치 표시다.
 //
-// 강조는 색 · 배경 · 테두리와 왼쪽 바까지다. 위치와 크기를 건드리지 않으므로
-// 등장 애니메이션이 아니라 현재 위치 표시다.
+// 색·치수는 토큰만 쓴다. 목업의 `#F5F4F1` · `10.5px` 류는 토큰에 없는 값이라
+// 그대로 옮기지 않았다 (하드 룰 1). 가져온 것은 **배치**다.
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -25,9 +31,8 @@ type Group = {
   /** 「STEP 01–02」. 붙임표는 en dash 다 */
   readonly eyebrow: string;
   readonly name: string;
-  readonly summary: string;
-  /** 앞 묶음과의 경계에 놓이는 관문 문구. 첫 묶음에는 없다 */
-  readonly entryNote?: string;
+  /** 이 묶음을 나가는 관문 문구. 마지막 묶음에는 없다 */
+  readonly exitNote?: string;
   readonly steps: readonly Step[];
 };
 
@@ -44,48 +49,46 @@ type ProcessStepsProps = {
 };
 
 /** 토큰 값만 쓴다. 임의 수치 금지 (하드 룰 2) */
-const TRANSITION =
-  'transition-[color,background-color,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]';
+const TRANSITION = 'transition-colors duration-[var(--duration-base)] ease-[var(--ease-out)]';
 
 /**
- * 단계 사이 관문 (FN-P09-03). 여덟 곳 — 단계 사이 일곱 곳과 8단계 카드 아래 한 곳.
- * 문구는 묶음이 바뀌는 경계와 마지막 한 곳에만 붙는다. 여덟 곳 전부에 문장을 달면
- * 읽을 것이 두 배가 되고 단계 카드가 묻힌다.
- *
- * 3열 격자를 쓰는 이유 — 문구를 마커와 같은 flex 행에 두면 행 전체가 가운데로
- * 정렬되면서 마커가 세로선 축에서 왼쪽으로 밀린다. 가운데 열에 마커를 고정하고
- * 문구는 오른쪽 열에 둔다.
+ * 레일 세로선 위에 얹히는 표시들의 가로 위치.
+ * 레일은 `border-l` + `pl-[--space-6]` 이라 선의 중심은 내용 왼쪽에서 `--space-6` 만큼
+ * 바깥이다. 도형의 절반을 더 빼서 선 위에 중심을 맞춘다.
  */
-function Gate({ label, note }: { label: string; note?: string }) {
+const DOT_X = 'left-[calc(-1*(var(--space-6)+var(--space-1)))]';
+const MARK_X = 'left-[calc(-1*(var(--space-6)+var(--space-2)))]';
+
+/** 관문 마커와 마지막 배너가 같은 도형을 쓴다 — 두 곳이 같은 「확인하고 넘어간다」다 */
+function CheckPath() {
+  return <path d="m5 13 4 4L19 7" />;
+}
+
+/**
+ * 단계 사이 관문 (FN-P09-03). 일곱 곳 — 묶음 안 네 곳(01↔02 · 03↔04 · 05↔06 · 07↔08)과
+ * 묶음이 바뀌는 세 곳이다. 여덟 번째는 목록 아래 배너(`gate.closing`)가 맡는다.
+ *
+ * 목업에는 이 마커가 없고 점만 있었다. 사용자 승인으로 남긴다 (8/22) —
+ * 「각 단계 사이에 관문을 표시한다」가 FN-P09-03 의 인수 기준이라 점만으로는 채워지지 않는다.
+ *
+ * 배경을 깔아 레일 선을 끊는다. 선이 마커를 관통하면 표시가 아니라 장식으로 읽힌다.
+ */
+function GateMarker({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <span aria-hidden="true" className="h-[var(--space-3)] w-px bg-border" />
-
-      <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center">
-        <span aria-hidden="true" />
-        <svg
-          role="img"
-          aria-label={label}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-3 text-brand-soft"
-        >
-          <path d="m5 13 4 4L19 7" />
-        </svg>
-        {note === undefined ? (
-          <span aria-hidden="true" />
-        ) : (
-          <span className="justify-self-start pl-[var(--space-2)] text-muted text-[length:var(--font-size-xs)]">
-            {note}
-          </span>
-        )}
-      </div>
-
-      <span aria-hidden="true" className="h-[var(--space-3)] w-px bg-border" />
+    <div className="relative h-[var(--space-6)]">
+      <svg
+        role="img"
+        aria-label={label}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`-translate-y-1/2 absolute top-1/2 ${MARK_X} size-4 rounded-pill bg-surface-raised text-brand-soft`}
+      >
+        <CheckPath />
+      </svg>
     </div>
   );
 }
@@ -99,11 +102,11 @@ export function ProcessSteps({ lead, groups, gate, className }: ProcessStepsProp
     const root = listRef.current;
     if (root === null) return;
 
-    const cards = root.querySelectorAll<HTMLElement>('[data-step-index]');
-    if (cards.length === 0) return;
+    const rows = root.querySelectorAll<HTMLElement>('[data-step-index]');
+    if (rows.length === 0) return;
 
-    // 뷰포트 가운데의 얇은 띠만 관측 구간으로 남긴다. 띠에 들어온 카드가 현재 단계다.
-    // 띠가 카드 사이 여백(관문)에 걸려 있는 동안에는 직전 값을 유지한다 —
+    // 뷰포트 가운데의 얇은 띠만 관측 구간으로 남긴다. 띠에 들어온 행이 현재 단계다.
+    // 띠가 행 사이 여백(관문)에 걸려 있는 동안에는 직전 값을 유지한다 —
     // 매번 비우면 스크롤 중에 강조가 깜빡인다.
     const observer = new IntersectionObserver(
       (entries) => {
@@ -117,15 +120,15 @@ export function ProcessSteps({ lead, groups, gate, className }: ProcessStepsProp
       { rootMargin: '-45% 0px -45% 0px' },
     );
 
-    for (const card of cards) observer.observe(card);
+    for (const row of rows) observer.observe(row);
     return () => observer.disconnect();
   }, []);
 
   return (
     <div className={className}>
       {/* 관문이 여덟 곳에 흩어져 있으므로 규칙을 목록 머리에 한 번 밝힌다.
-          잠깐 개요 블록으로 옮겼다가 되돌렸다 (8/20) — 그 블록이 P-01 섹션 7 과
-          중복이 되어 사라졌고, 이 문장은 목록의 전제라 목록과 함께 있어야 한다 */}
+          목업에는 없는 줄이고 사용자 승인으로 남겼다 (8/22) — 마커가 무엇을 뜻하는지
+          화면에서 말하는 곳이 여기뿐이다 */}
       <p className="text-base text-muted leading-[var(--leading-relaxed)]">{lead}</p>
 
       <ol ref={listRef} className="mt-[var(--space-8)]">
@@ -136,75 +139,102 @@ export function ProcessSteps({ lead, groups, gate, className }: ProcessStepsProp
             .reduce((count, previous) => count + previous.steps.length, 0);
 
           return (
-            <li key={group.name}>
-              {/* 묶음 경계의 관문 — 02↔03 · 04↔05 · 06↔07. 문구가 붙는 자리다 */}
-              {groupIndex > 0 && <Gate label={gate.label} note={group.entryNote} />}
+            /* 묶음 구분선은 진한 `border-ink` 다. 레일 선(`border-border`)보다 강해야
+               묶음의 경계가 단계 사이 간격과 구분된다 — 두 선이 같은 값이면
+               8단계가 넷씩 묶여 있다는 것이 보이지 않는다 */
+            <li
+              key={group.name}
+              className="border-ink border-t py-[var(--space-8)] first:border-t-0 first:pt-0"
+            >
+              <div className="grid gap-[var(--space-6)] md:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] md:gap-[var(--space-8)]">
+                {/* 좌 — 묶음 칸. STEP 라벨 · 이름 · 관문 문구 셋이다.
+                    묶음 설명(summary)은 두지 않는다 (8/22) — 이 칸이 11rem 이라
+                    한 문장이 대여섯 줄로 접힌다. 그 문장은 P-01 섹션 7 이 갖고 있다 */}
+                <div>
+                  <p className="font-semibold text-brand text-[length:var(--font-size-xs)] tracking-[var(--tracking-label)]">
+                    {group.eyebrow}
+                  </p>
+                  <p className="mt-[var(--space-2)] font-bold text-ink text-[length:var(--font-size-lg)] leading-[var(--leading-heading)]">
+                    {group.name}
+                  </p>
 
-              {/* 묶음 머리글. 단계 라벨보다 작고, 스크롤 강조 대상이 아니다.
-                  STEP 라벨 · 이름 · summary 세 줄이다. 잠깐 summary 를 뺐다가
-                  되돌렸다 (8/20) — 뺀 이유가 개요 블록과의 중복이었는데 그 블록이
-                  사라졌다. 이제 이 화면에서 묶음을 설명하는 곳은 여기뿐이다.
-                  P-01 섹션 7 이 같은 4묶음을 갖지만 그건 다른 화면이라 중복이 아니다 */}
-              <div className={groupIndex > 0 ? 'mt-[var(--space-4)]' : undefined}>
-                <p className="font-semibold text-subtle text-[length:var(--font-size-xs)] tracking-[var(--tracking-label)]">
-                  {group.eyebrow}
-                </p>
-                <p className="mt-[var(--space-1)] font-medium text-ink text-sm">{group.name}</p>
-                <p className="mt-[var(--space-1)] text-muted text-sm">{group.summary}</p>
+                  {/* 관문 문구. 왼쪽 브랜드 색 바가 아래 레일의 관문 마커와 짝이다 */}
+                  {group.exitNote !== undefined && (
+                    <p className="mt-[var(--space-4)] border-brand border-l-2 pl-[var(--space-3)] font-medium text-ink text-[length:var(--font-size-xs)] leading-[var(--leading-relaxed)]">
+                      {group.exitNote}
+                    </p>
+                  )}
+                </div>
+
+                {/* 우 — 단계 레일. 세로선 하나에 단계마다 점이 얹힌다 */}
+                <div className="border-border border-l pl-[var(--space-6)]">
+                  <ol>
+                    {group.steps.map((step, stepIndex) => {
+                      const index = offset + stepIndex;
+                      const ordinal = String(index + 1).padStart(2, '0');
+                      const isActive = index === activeIndex;
+
+                      return (
+                        <li key={step.label}>
+                          {/* 묶음 안의 관문 — 01↔02 · 03↔04 · 05↔06 · 07↔08 */}
+                          {stepIndex > 0 && <GateMarker label={gate.label} />}
+
+                          <div data-step-index={index} className="relative py-[var(--space-3)]">
+                            <span
+                              aria-hidden="true"
+                              className={`absolute top-[var(--space-4)] ${DOT_X} size-2 rounded-pill ${TRANSITION} ${
+                                isActive ? 'bg-brand' : 'bg-subtle'
+                              }`}
+                            />
+                            <p
+                              aria-hidden="true"
+                              className={`font-semibold text-[length:var(--font-size-xs)] tabular-nums tracking-[var(--tracking-label)] ${TRANSITION} ${
+                                isActive ? 'text-brand' : 'text-subtle'
+                              }`}
+                            >
+                              {ordinal}
+                            </p>
+                            <p className="mt-[var(--space-1)] font-semibold text-ink text-[length:var(--font-size-base)]">
+                              {step.label}
+                            </p>
+                            <p className="mt-[var(--space-1)] text-muted text-[length:var(--font-size-sm)] leading-[var(--leading-relaxed)]">
+                              {step.description}
+                            </p>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+
+                  {/* 묶음이 바뀌는 관문 — 02↔03 · 04↔05 · 06↔07.
+                      레일 끝에 놓아 같은 묶음 칸의 관문 문구와 한 덩어리로 읽힌다 */}
+                  {group.exitNote !== undefined && <GateMarker label={gate.label} />}
+                </div>
               </div>
-
-              <ol className="mt-[var(--space-4)]">
-                {group.steps.map((step, stepIndex) => {
-                  const index = offset + stepIndex;
-                  const ordinal = String(index + 1).padStart(2, '0');
-                  const isActive = index === activeIndex;
-
-                  return (
-                    <li key={step.label}>
-                      {/* 묶음 안의 관문 — 01↔02 · 03↔04 · 05↔06 · 07↔08. 마커만 둔다 */}
-                      {stepIndex > 0 && <Gate label={gate.label} />}
-                      <div
-                        data-step-index={index}
-                        className={`relative flex items-center gap-[var(--space-5)] overflow-hidden rounded-card border p-[var(--space-6)] ${TRANSITION} ${
-                          isActive ? 'border-border-strong bg-surface-soft' : 'border-border'
-                        }`}
-                      >
-                        {/* 왼쪽 바. border-left 로 넣으면 모서리 곡률이 한쪽만 펴진다.
-                            absolute 로 얹고 카드의 overflow-hidden 이 곡률을 따라 자른다 */}
-                        {isActive && (
-                          <span
-                            aria-hidden="true"
-                            className="absolute inset-y-0 left-0 w-[2px] bg-brand"
-                          />
-                        )}
-                        <span
-                          aria-hidden="true"
-                          className={`shrink-0 font-mono font-semibold text-4xl leading-none tabular-nums ${TRANSITION} ${
-                            isActive ? 'text-brand' : 'text-subtle'
-                          }`}
-                        >
-                          {ordinal}
-                        </span>
-                        <div>
-                          <p className="font-semibold text-ink text-[length:var(--font-size-lg)] leading-[var(--leading-heading)]">
-                            {step.label}
-                          </p>
-                          <p className="mt-[var(--space-2)] text-muted text-[length:var(--font-size-base)] leading-[var(--leading-relaxed)]">
-                            {step.description}
-                          </p>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ol>
             </li>
           );
         })}
       </ol>
 
-      {/* 마지막 관문. 8단계 카드 아래에 온다 — 종료도 검수를 거친다 */}
-      <Gate label={gate.label} note={gate.closing} />
+      {/* 여덟 번째 관문. 8단계 아래에 온다 — 종료도 검수를 거친다 */}
+      <div className="flex items-center gap-[var(--space-3)] rounded-card bg-surface-soft px-[var(--space-6)] py-[var(--space-4)]">
+        <svg
+          role="img"
+          aria-label={gate.label}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="size-4 shrink-0 text-brand"
+        >
+          <CheckPath />
+        </svg>
+        <p className="font-semibold text-brand-soft text-[length:var(--font-size-base)]">
+          {gate.closing}
+        </p>
+      </div>
     </div>
   );
 }
