@@ -16,6 +16,8 @@ import { absoluteUrl, siteUrl } from '@/lib/site';
  * 프로젝트 0건도 같이 빠진다 (POL-02).
  *
  * 범위 밖: P-07 `/courses`(화면 19종에서 제외). P-02 `/about` 은 미구현이라 뺐다.
+ * **P-10 `/contact` 도 뺐다** — 플러그 폼으로 넘기는 주소라 색인 대상이 아니다
+ * (app/contact/page.tsx). 색인 요청 목록에 리다이렉트를 실으면 오류로 잡힌다.
  */
 const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
   { path: '/', changeFrequency: 'daily', priority: 1 },
@@ -23,7 +25,6 @@ const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[numb
   { path: '/builders', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/process', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/insights', changeFrequency: 'weekly', priority: 0.7 },
-  { path: '/contact', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
