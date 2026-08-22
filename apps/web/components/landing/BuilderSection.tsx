@@ -13,7 +13,7 @@
 //
 // 배경 — 5 빌더 = bg-surface-raised · text-ink (배경 리듬표 5행)
 //   FN-P01-29 가 "구분은 배경색 차이"를 요구하는데, 리듬표 값이 이미 그 조건을 만족한다.
-//   4 포트폴리오 bg-surface-soft → 5 빌더 bg-surface-raised → 6 교육·조직 bg-canvas 로
+//   4 포트폴리오 bg-surface-soft → 5 빌더 bg-surface-raised → 7 일하는 방식 bg-canvas 로
 //   양옆과 모두 다르다. 여기서 값을 바꾸면 리듬표(4구간 · 전환 3회) 쪽이 깨지므로
 //   바꾸지 않는다.
 //
@@ -21,7 +21,8 @@
 // 클라이언트에서 부르면 안 된다 (lib/queries/builder-cards.ts 머리말 참조).
 //
 // 인터랙션은 목록의 좌→우 stagger 하나다 (8/20 신설 — components/landing/BuilderGrid.tsx).
-// 5 가 0건이면 6(의도적 공백)과 붙어 인접 두 섹션이 같아진다 — FN-P01-02 위반이었다.
+// 8/20 당시 5 가 0건이면 6(의도적 공백)과 붙어 인접 두 섹션이 같아지는 문제가 있었다.
+// 6 이 8/22 에 빠져 그 조건은 사라졌지만 stagger 는 그대로 둔다 (BuilderGrid.tsx 참조).
 
 import Link from 'next/link';
 
