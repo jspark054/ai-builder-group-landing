@@ -19,8 +19,8 @@ echo
 cat <<'DOCS'
 ## 문서 우선순위 (충돌 시)
 1. project-docs/260812_서대표미팅_회의록.md          ← 클라이언트 직접 결정
-2. project-docs/확정문서(260814)/260811_4_결정시트.md
-3. project-docs/확정문서(260814)/                   ← 화면·기능·데이터·정책
+2. project-docs/확정문서/260811_4_결정시트.md
+3. project-docs/확정문서/                            ← 화면·기능·데이터·정책
 4. project-docs/260814_구현결정_박진선.md
 5. project-docs/기획안_*.md · project-docs/PRD_*.md ← 카피·문구
 
