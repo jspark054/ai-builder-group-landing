@@ -1,11 +1,11 @@
 /**
  * Supabase 설정 감지.
  *
- * 이 템플릿은 **키가 없는 상태로도 완전히 동작**해야 합니다 (데모 상태).
- * 키가 채워지고 마이그레이션이 끝나면 그때 Supabase 드라이버가 활성화됩니다.
+ * 이 프로젝트의 콘텐츠 소스는 **Supabase 하나뿐**입니다 (하드룰 4).
+ * 파일 기반 폴백은 없으므로, 키가 없으면 공개 화면은 콘텐츠를 렌더할 수 없습니다.
  *
- * 따라서 여기서는 절대 throw 하지 않습니다. 설정 여부를 boolean 으로만 알려주고,
- * 실제 클라이언트 생성 시점에만 오류를 냅니다.
+ * 그래도 감지 함수는 throw 하지 않습니다. 설정 여부를 boolean 으로만 알려주고,
+ * 실제 클라이언트 생성 시점(`requireConfig`)에만 오류를 냅니다.
  */
 
 export interface SupabaseConfig {
@@ -34,7 +34,7 @@ export function getPublicConfig(): { url?: string; anonKey?: string; bucket: str
 /**
  * Supabase 를 쓸 수 있는 상태인가.
  *
- * 이 값이 false 면 파일 기반 드라이버가 계속 쓰입니다. 앱은 정상 동작합니다.
+ * 이 값이 false 면 읽을 수 있는 콘텐츠 소스가 없습니다. 대체 드라이버는 없습니다.
  */
 export function isSupabaseConfigured(): boolean {
   const { url, anonKey } = getPublicConfig();
@@ -86,8 +86,9 @@ export function describeStatus(): {
       configured: false,
       writable: false,
       message:
-        'Supabase 미설정 — 파일 기반(content/posts/*.md)으로 동작 중입니다. ' +
-        '.env 에 NEXT_PUBLIC_SUPABASE_URL 과 NEXT_PUBLIC_SUPABASE_ANON_KEY 를 넣으면 전환됩니다.',
+        'Supabase 키가 없습니다. 공개 화면은 콘텐츠를 렌더할 수 없습니다. ' +
+        '이 프로젝트에 파일 기반 폴백은 없습니다 (하드룰 4). ' +
+        '.env 에 NEXT_PUBLIC_SUPABASE_URL 과 NEXT_PUBLIC_SUPABASE_ANON_KEY 를 넣으세요.',
     };
   }
   if (!writable) {

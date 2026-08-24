@@ -118,7 +118,7 @@ else
   cp .env.example .env && ok ".env 생성됨 (.env.example 복사)"
 fi
 
-mkdir -p content/posts wiki/memory/short-term wiki/memory/long-term apps/web/public/images/posts
+mkdir -p apps/web/public/images/posts
 ok "필수 디렉터리 확인"
 
 chmod +x scripts/*.sh .claude/hooks/*.sh 2>/dev/null
