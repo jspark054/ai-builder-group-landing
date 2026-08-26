@@ -18,12 +18,13 @@
 //
 // 판단 여섯 가지를 여기에 남긴다.
 //
-// 1) 문의 CTA(FN-P06-06)를 렌더하지 않는다
-//    C-03 의 목적지인 **P-10 `/contact` 이 아직 없다.** 붙이면 화면에서 가장 큰
-//    버튼이 404 로 간다. P-04 와 같은 처리다. 대체 CTA 도 만들지 않는다 (REQ-F-007).
-//    **P-10 을 만들면 담당 프로젝트 뒤에 `<ContactCta source="p06" slug={builder.slug} />`
-//    한 줄을 넣는다.** 부품·문구·파라미터는 이미 준비돼 있다
-//    (components/cta/contact-cta.tsx · contactCtaCopy.label.builder).
+// 1) 문의 CTA(FN-P06-06)를 렌더한다 — 08-26 추가
+//    C-03 의 목적지인 P-10 `/contact` 이 8/22 에 열리면서 「목적지가 404 라 비워 둔다」는
+//    종전 사유가 해소됐다. 도면(§5.5)대로 담당 프로젝트 **뒤 맨 하단**에 둔다.
+//    **담당 프로젝트 0건이어도 렌더한다** — 이 화면은 영업이 단독 전달하는 자료라
+//    (§4.5 목적) 문의 경로가 사라지면 URL 하나로 설득이 성립한다는 전제가 깨진다.
+//    POL-02 의 「빈 요소」는 값이 없는 블록을 말하고, CTA 는 값에 의존하지 않는다.
+//    대체 CTA 는 만들지 않는다 (REQ-F-007).
 //
 // 2) 인트로(FN-P06-09)를 렌더하지 않는다
 //    기능명세 §4.5 의 인트로 문안은 「기획-2안 카피 (v3.0)」으로 명시돼 있고
@@ -53,6 +54,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import { ProjectCard } from '@/components/cards/project-card';
+import { ContactCta } from '@/components/cta/contact-cta';
 import { PlaceholderNotice } from '@/components/PlaceholderNotice';
 import { builderCardCopy, placeholderNoticeCopy } from '@/content/component-copy';
 import { displayNameInitial } from '@/lib/display-name';
@@ -292,8 +294,13 @@ export default async function BuilderDetailPage({
             </section>
           )}
 
-          {/* FN-P06-06 문의 CTA 는 여기 들어간다. P-10 `/contact` 미구현이라 비워 둔다 —
-              머리말 판단 1 참조. 대체 버튼을 만들지 않는다 (REQ-F-007) */}
+          {/* FN-P06-06 — C-03 문의 CTA. 도면(§5.5)이 맨 하단에 둔다.
+              문구·파라미터는 C-03 이 갖는다 (contactCtaCopy.label.builder ·
+              `builder={slug}&utm_source=builder`). 담당 프로젝트 유무와 무관하게
+              렌더한다 — 머리말 판단 1 참조 */}
+          <div className="mt-[var(--space-12)]">
+            <ContactCta source="p06" slug={builder.slug} />
+          </div>
         </div>
       </div>
     </>

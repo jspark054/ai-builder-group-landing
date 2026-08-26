@@ -7,7 +7,35 @@
  * insight 테이블 스키마가 확정되면 아래 입력 타입을 그쪽에 맞춰 좁힌다.
  */
 
-import { siteName, siteUrl } from '@/lib/site';
+import { siteDescription, siteName, siteUrl } from '@/lib/site';
+
+/**
+ * FN-SEO-04 — `Organization`.
+ *
+ * 명세가 요구하는 구조화 데이터 3종(Organization · Article · FAQPage) 중
+ * 하나다. Article 은 P-04 가(`projectArticleJsonLd`), FAQPage 는
+ * `faqJsonLd()` 가 맡고, 조직 자체를 진술하는 것은 이 함수뿐이다.
+ *
+ * **P-01 한 곳에서만 낸다.** 사이트의 루트 엔티티 페이지가 조직을 선언하는 자리이고,
+ * 전 화면에 깔면 같은 노드가 페이지 수만큼 중복된다.
+ *
+ * 넣지 않는 것 — `logo` · `address` · `telephone` · `sameAs`.
+ *   로고 파일이 없고(public/images 에 브랜드 자산 없음), 주소·연락처는 확정값을
+ *   수령하지 못했다(devlog 「미결」). 구조화 데이터는 화면에 없는 사실을 지어내는
+ *   자리가 아니다 — 값이 생기면 여기에 더한다.
+ *
+ * `foundingDate` · 수료 인원 같은 수치도 두지 않는다 (POL-01 실적 수치 금지).
+ */
+export function organizationJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${siteUrl}/#organization`,
+    name: siteName,
+    url: siteUrl,
+    description: siteDescription,
+  };
+}
 
 export interface ArticleJsonLdInput {
   slug: string;

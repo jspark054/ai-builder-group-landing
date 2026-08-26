@@ -26,6 +26,7 @@ import { Hero } from '@/components/landing/Hero';
 import { PortfolioSection } from '@/components/landing/PortfolioSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { ProcessSection } from '@/components/landing/ProcessSection';
+import { organizationJsonLd } from '@/lib/jsonld';
 
 /**
  * IA §3.1 — 렌더링 `SSG+ISR`.
@@ -40,6 +41,13 @@ export const revalidate = 3600;
 export default function LandingPage() {
   return (
     <>
+      {/* FN-SEO-04 — Organization. 답변엔진이 본문보다 먼저 읽는다 (REQ-N-001 · GEO).
+          사이트 전체에서 이 한 곳만 낸다 (lib/jsonld.ts 머리말 참조) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+      />
+
       <Hero />
       <ProblemSection />
       <CriteriaSection />

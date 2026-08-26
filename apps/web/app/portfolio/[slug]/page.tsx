@@ -19,13 +19,10 @@
 //
 // 판단 다섯 가지를 여기에 남긴다.
 //
-// 1) 문의 CTA(FN-P04-08)를 렌더하지 않는다
-//    C-03 의 목적지인 **P-10 `/contact` 이 아직 없다.** 붙이면 화면에서 가장 큰
-//    버튼이 404 로 간다. 색인 1위 화면에 죽은 CTA 를 두는 쪽이 CTA 가 없는 것보다
-//    나쁘다. 대체 CTA 도 만들지 않는다 (REQ-F-007 경쟁 CTA 금지).
-//    **P-10 을 만들면 여기에 `<ContactCta source="p04" slug={project.slug} />` 한 줄을
-//    담당 빌더 앞에 넣는다.** 부품·문구·파라미터는 이미 준비돼 있다
-//    (components/cta/contact-cta.tsx · contactCtaCopy.label.portfolio).
+// 1) 문의 CTA(FN-P04-08)를 렌더한다 — 08-26 추가
+//    C-03 의 목적지인 P-10 `/contact` 이 8/22 에 열리면서(플러그 폼으로 넘기는 화면)
+//    「목적지가 404 라 비워 둔다」는 종전 사유가 해소됐다. 도면(§5.3)대로 본문과
+//    담당 빌더 **사이**에 둔다. 대체 CTA 는 여전히 만들지 않는다 (REQ-F-007).
 //
 // 2) PageHeader 를 쓰지 않는다
 //    PageHeader 는 h1 + 서브카피 두 개짜리 껍데기다. 이 화면의 헤더에는 목록 복귀
@@ -49,6 +46,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ContactCta } from '@/components/cta/contact-cta';
 import { PlaceholderNotice } from '@/components/PlaceholderNotice';
 import { placeholderNoticeCopy, projectCardCopy } from '@/content/component-copy';
 import { projectArticleJsonLd, projectUrl } from '@/lib/jsonld';
@@ -307,8 +305,12 @@ export default async function ProjectDetailPage({
             ))}
           </div>
 
-          {/* FN-P04-08 문의 CTA 는 여기 들어간다. P-10 `/contact` 미구현이라 비워 둔다 —
-              머리말 판단 1 참조. 대체 버튼을 만들지 않는다 (REQ-F-007) */}
+          {/* FN-P04-08 — C-03 문의 CTA. 도면(§5.3)이 본문과 담당 빌더 **사이**에 둔다.
+              문구·파라미터는 C-03 이 갖는다 (contactCtaCopy.label.portfolio ·
+              `ref={slug}&utm_source=portfolio`). 대체 버튼을 곁들이지 않는다 (REQ-F-007) */}
+          <div className="mt-[var(--space-12)]">
+            <ContactCta source="p04" slug={project.slug} />
+          </div>
 
           {/* FN-P04-07 — 담당 빌더 전원. 각각 P-06 으로 보낸다.
               「대표」 표기를 만들지 않는다 — 화면설계·기능명세에 대표 표기 규칙이 없다.
