@@ -49,6 +49,19 @@ export type ProjectDetailData = {
   categories: { name: string }[];
   /** FN-P04-07 — 공개 빌더만. 비공개는 P-06 이 404 라 링크 대상에서 빠진다 */
   builders: ProjectDetailBuilder[];
+  /**
+   * A-03 에서 입력한 SEO 메타 (FN-A03-12 · POL-06).
+   *
+   * 미입력이면 null 이고, 그때는 화면이 지금까지 쓰던 방식으로 떨어진다
+   * (제목 + 접미사 · description 은 summary). **fallback 이지 기본값이 아니다** —
+   * `summary` 는 44~50자라 POL-06 하한(80자)에 미달한다.
+   *
+   * ⚠ `metaTitle` 은 **접미사를 포함한 완성된 제목**이다. 화면이 뒤에 무엇을 붙이지
+   *   않는다 (08-27 사용자 지시). 건마다 접미사 길이를 달리해야 40자 상한에 맞출 수
+   *   있기 때문이다 — 「우리동네광고」가 그 경우다.
+   */
+  metaTitle: string | null;
+  metaDescription: string | null;
   /** JSON-LD 의 datePublished · dateModified (FN-P04-10) */
   createdAt: string;
   updatedAt: string;
@@ -103,7 +116,7 @@ export async function getProjectDetail(slug: string): Promise<ProjectDetailData 
     // 컬럼 목록은 **문자열 리터럴로** 둔다. 상수로 빼서 이어 붙이면 supabase-js 가
     // 결과 타입을 추론하지 못해 Row 가 통째로 GenericStringError 가 된다 (실측 TS2339).
     .select(
-      'id, slug, title, summary, body_what, body_why, body_how, body_result, thumbnail_url, thumbnail_alt, live_url, link_grade, created_at, updated_at',
+      'id, slug, title, summary, body_what, body_why, body_how, body_result, thumbnail_url, thumbnail_alt, live_url, link_grade, meta_title, meta_description, created_at, updated_at',
     )
     .eq('slug', slug)
     // 화면설계 §5.3 — 비공개는 404 다. 쿼리에서 거르므로 화면이 판단할 것이 없다
@@ -189,6 +202,8 @@ export async function getProjectDetail(slug: string): Promise<ProjectDetailData 
     linkGrade: project.link_grade,
     categories: projectCategories,
     builders: projectBuilders,
+    metaTitle: project.meta_title,
+    metaDescription: project.meta_description,
     createdAt: project.created_at,
     updatedAt: project.updated_at,
   };

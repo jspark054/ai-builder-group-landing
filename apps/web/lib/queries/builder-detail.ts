@@ -48,6 +48,14 @@ export type BuilderDetailData = {
   courseTitle: string | null;
   /** FN-P06-02 — 담당 공개 프로젝트. C-01 카드 형태 그대로 */
   projects: ProjectCardData[];
+  /**
+   * A-02 · A-06 에서 입력한 SEO 메타 (FN-A02-07 · POL-06).
+   *
+   * ⚠ `metaTitle` 은 **접미사를 포함한 완성된 제목**이다. 화면이 뒤에 무엇을 붙이지
+   *   않는다 (08-27 사용자 지시 · P-04 와 같은 규칙).
+   */
+  metaTitle: string | null;
+  metaDescription: string | null;
 };
 
 /** POL-05 · FN-P06-07 — 상세 표기 상한. 저장 제한이 아니라 화면 규칙이다 */
@@ -108,7 +116,9 @@ export async function getBuilderDetail(slug: string): Promise<BuilderDetailData 
     .from('builder')
     // 컬럼 목록은 문자열 리터럴로 둔다. 상수로 빼면 supabase-js 가 결과 타입을
     // 추론하지 못해 Row 가 통째로 GenericStringError 가 된다 (P-04 에서 실측)
-    .select('id, slug, display_name, image_url, image_alt, cohort, bio, career, course_id')
+    .select(
+      'id, slug, display_name, image_url, image_alt, cohort, bio, career, course_id, meta_title, meta_description',
+    )
     .eq('slug', slug)
     // 화면설계 §5.5 — 비공개 빌더 접근은 404. 쿼리에서 거르므로 화면이 판단할 것이 없다
     .eq('is_public', true)
@@ -144,5 +154,7 @@ export async function getBuilderDetail(slug: string): Promise<BuilderDetailData 
     career: parseCareer(builder.career).slice(0, CAREER_LIMIT),
     courseTitle,
     projects,
+    metaTitle: builder.meta_title,
+    metaDescription: builder.meta_description,
   };
 }

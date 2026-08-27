@@ -121,19 +121,32 @@ export async function generateMetadata({
   // 404 로 갈 경로에는 메타를 만들지 않는다. 레이아웃 기본값이 남는다
   if (!builder) return {};
 
+  /**
+   * A-02 · A-06 에서 입력한 값이 있으면 그것이 우선이다 (FN-A02-07 · POL-06).
+   *
+   * 🔴 `metaTitle` 은 **접미사까지 포함된 완성된 제목**이다. 여기서 뒤에 무엇을 붙이지
+   *    않는다 (08-27 사용자 지시 · P-04 와 같은 규칙).
+   *
+   * description 은 `metaDescription` → `bio` 순으로 떨어진다.
+   * ⚠ 예전에는 「`bio` 가 전 건 null 이라 description 을 넣지 않는다」였는데,
+   *   08-24 에 샘플 6명이 들어오면서 `bio` 가 채워졌다. 그래도 `bio` 는 31~52자라
+   *   POL-06 하한(80자)에 미달한다 — `metaDescription` 이 채워져야 해소된다.
+   *   **여기서 소개 문장을 지어내지 않는다** (CLAUDE.md · POL-13).
+   */
+  const title = builder.metaTitle ?? `${builder.displayName} | ${p06Copy.metaTitleSuffix}`;
+  const description = builder.metaDescription ?? builder.bio ?? undefined;
+
   return {
-    // POL-06 — 표기명이 맨 앞에 온다(핵심 키워드 앞 15자 이내).
     // absolute 로 넘기는 이유: 루트 layout 의 `%s | {siteName}` 템플릿을 타면
     // 사이트명이 두 번 붙는다
-    title: { absolute: `${builder.displayName} | ${p06Copy.metaTitleSuffix}` },
-    // ⚠ description 을 넣지 않는다. 근거가 될 문장이 `bio` 인데 전 건 null 이고,
-    //   여기서 소개 문장을 지어내는 것은 카피 기준 위반이다 (CLAUDE.md · POL-13).
-    //   루트 layout 의 사이트 설명이 그대로 쓰인다. bio 가 채워지면 여기에 싣는다.
+    title: { absolute: title },
+    ...(description ? { description } : {}),
     // FN-P06-08 — self canonical
     alternates: { canonical: builderUrl(builder.slug) },
     openGraph: {
       type: 'profile',
-      title: `${builder.displayName} | ${p06Copy.metaTitleSuffix}`,
+      title,
+      ...(description ? { description } : {}),
       url: builderUrl(builder.slug),
       // ⚠ 이미지도 전 건 미등록이라 og:image 가 없다. 코드로 만들지 않는다 (하드 룰 3).
       //   PRD `FR-2.9` ③이 "이미지 없는 빌더도 텍스트 기반 자동 생성"을 요구하는데

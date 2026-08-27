@@ -94,21 +94,31 @@ export async function generateMetadata({
   // 404 로 갈 경로에는 메타를 만들지 않는다. 레이아웃 기본값이 남는다
   if (!project) return {};
 
+  /**
+   * A-03 에서 입력한 값이 있으면 그것이 우선이다 (FN-A03-12 · POL-06).
+   *
+   * 🔴 `metaTitle` 은 **접미사까지 포함된 완성된 제목**이다. 여기서 뒤에 무엇을 붙이지
+   *    않는다 (08-27 사용자 지시). 건마다 접미사 길이를 달리해야 40자 상한에 맞출 수
+   *    있어서다 — 「우리동네광고」는 「AI 빌더그룹 포트폴리오」를 붙이면 42자가 된다.
+   *
+   * 미입력이면 지금까지 쓰던 방식으로 떨어진다. ⚠ 그 fallback 의 description 은
+   * `summary`(44~50자)라 POL-06 하한(80자)에 미달한다 — 값이 채워지면 해소된다.
+   */
+  const title = project.metaTitle ?? `${project.title} | ${p04Copy.metaTitleSuffix}`;
+  // 새 문장을 만들지 않는다 (POL-13). 둘 다 A-03 에서 입력한 값이거나 기존 컬럼이다
+  const description = project.metaDescription ?? project.summary;
+
   return {
-    // POL-06 — 프로젝트명이 맨 앞에 온다(핵심 키워드 앞 15자 이내).
     // absolute 로 넘기는 이유: 루트 layout 의 `%s | {siteName}` 템플릿을 타면
     // 사이트명이 두 번 붙어 40자 제한을 넘긴다
-    title: { absolute: `${project.title} | ${p04Copy.metaTitleSuffix}` },
-    // 새 문장을 만들지 않고 summary 컬럼을 그대로 쓴다 (POL-13).
-    // ⚠ 현재 데이터는 44~50자로 POL-06 하한(80자)에 미달한다. 화면에서 늘리지 않는다 —
-    //   늘리려면 A-03 에서 summary 를 고쳐야 한다
-    description: project.summary,
+    title: { absolute: title },
+    description,
     // FN-P04-09 — self canonical. 한글 슬러그라 인코딩된 절대 URL 로 넘긴다
     alternates: { canonical: projectUrl(project.slug) },
     openGraph: {
       type: 'article',
-      title: `${project.title} | ${p04Copy.metaTitleSuffix}`,
-      description: project.summary,
+      title,
+      description,
       url: projectUrl(project.slug),
       // FN-P04-02 — 대표 이미지를 OG 이미지로 지정한다.
       // ⚠ 5건 중 4건이 SVG 플레이스홀더다. 대부분의 크롤러가 SVG 를 OG 이미지로
