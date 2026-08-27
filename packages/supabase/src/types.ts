@@ -172,6 +172,42 @@ export type SiteSettingRow = {
 };
 
 /**
+ * 인사이트 카테고리. `/insights/{category}` 가 점유한 **예약어 3개**이며
+ * 글 슬러그로 쓸 수 없습니다 (IA §4 · FN-A07-04 · DB CHECK 양쪽).
+ */
+export type InsightCategory = 'before' | 'process' | 'people';
+
+/** 공개 조건은 `published` **이고** `published_at` 이 있을 때입니다. 그 외는 404. */
+export type InsightStatus = 'draft' | 'review' | 'published';
+
+/**
+ * 인사이트 글. 데이터모델 §3.6a · 마이그레이션 0002
+ *
+ * `body` 는 **마크다운**입니다. 에디터가 경계에서만 HTML 로 바꿉니다
+ * (`apps/admin/lib/markdown.ts`).
+ *
+ * `cover_image_url` 은 파생 값이지만 저장합니다 — 데이터모델 §6 원칙의 명시적 예외입니다.
+ * 본문 저장 시 함께 갱신합니다 (FN-A07-07).
+ */
+export type InsightRow = {
+  id: string;
+  slug: string;
+  title: string;
+  body: string;
+  category: InsightCategory;
+  /** NOT NULL — REQ-F-095 가 익명·조직 명의 글을 금지합니다. */
+  builder_id: string;
+  cover_image_url: string | null;
+  status: InsightStatus;
+  published_at: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  og_image_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
  * supabase-js checks this against its internal `GenericSchema`. Omitting
  * `Views` / `Functions` / `Enums` / `CompositeTypes` / `Relationships` makes
  * the constraint fail silently and every query result collapses to `never`,
@@ -220,6 +256,16 @@ export type Database = {
         Row: ProjectCategoryRow;
         Insert: Omit<ProjectCategoryRow, 'id'> & { id?: string };
         Update: Partial<ProjectCategoryRow>;
+        Relationships: [];
+      };
+      insight: {
+        Row: InsightRow;
+        Insert: Omit<InsightRow, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<InsightRow>;
         Relationships: [];
       };
       // `key` 가 기본키라 Insert 에서 생략할 수 없다 (다른 테이블의 `id?` 와 다르다)

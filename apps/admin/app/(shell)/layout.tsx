@@ -28,7 +28,10 @@ export const dynamic = 'force-dynamic';
  *   A-07(`/insights`) · A-06(`/my`) 은 그 화면을 만들 때 한 줄씩 추가한다.
  *   없는 주소를 미리 걸어 두면 메뉴가 404 로 가는 목록이 된다.
  */
-const NAV = [{ href: '/', label: '대시보드' }];
+const NAV = [
+  { href: '/', label: '대시보드' },
+  { href: '/insights', label: '인사이트' },
+];
 
 export default async function ShellLayout({ children }: { children: React.ReactNode }) {
   const viewer = await getViewer();

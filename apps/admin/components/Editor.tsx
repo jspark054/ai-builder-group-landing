@@ -7,6 +7,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { htmlToMarkdown, markdownToHtml } from '@/lib/markdown';
+import { BASE_PATH } from '@/lib/routes';
 
 /**
  * Rich text editor for post bodies.
@@ -20,12 +21,22 @@ interface EditorProps {
   name: string;
   defaultValue: string;
   slug: string;
+  /**
+   * 본문이 바뀔 때마다 마크다운을 넘긴다.
+   *
+   * A-07 의 대표 이미지 미리보기(FN-A07-07)가 본문 첫 이미지를 봐야 해서 붙였다.
+   * 저장 값은 여전히 아래 hidden input 이 나른다 — 이건 곁가지 통지다.
+   */
+  onChange?: (markdown: string) => void;
 }
 
-export function Editor({ name, defaultValue, slug }: EditorProps) {
+export function Editor({ name, defaultValue, slug, onChange }: EditorProps) {
   const [markdown, setMarkdown] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  /** 업로드는 끝났고 본문에 넣기 전. 대체 텍스트를 받는 동안 여기 머문다 */
+  const [pendingImage, setPendingImage] = useState<string | null>(null);
+  const [altDraft, setAltDraft] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -45,7 +56,11 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
           'prose-editor min-h-[26rem] w-full rounded-b-lg border border-t-0 border-neutral-300 bg-white px-4 py-3 outline-none focus:border-[var(--color-accent)]',
       },
     },
-    onUpdate: ({ editor }) => setMarkdown(htmlToMarkdown(editor.getHTML())),
+    onUpdate: ({ editor }) => {
+      const next = htmlToMarkdown(editor.getHTML());
+      setMarkdown(next);
+      onChange?.(next);
+    },
   });
 
   // Keep the hidden field in sync if the incoming post changes.
@@ -62,17 +77,22 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
         body.append('file', file);
         body.append('slug', slug);
 
-        const response = await fetch('/api/upload', { method: 'POST', body });
+        // 🔴 클라이언트 `fetch` 는 basePath 를 붙여 주지 않는다. `Link` 나 `redirect()` 와
+        //    다르다 — 절대 경로로 두면 `/api/upload` 를 때려 404 HTML 이 돌아오고,
+        //    JSON 파싱에서 「Unexpected token '<'」 로 터진다 (2026-08-27 실측).
+        const response = await fetch(`${BASE_PATH}/api/upload`, { method: 'POST', body });
         const result = (await response.json()) as { url?: string; error?: string };
 
         if (!response.ok || !result.url) {
           throw new Error(result.error ?? '업로드에 실패했습니다.');
         }
 
-        // Alt text is a publish-gate requirement, so prompt for it up front
-        // rather than letting an empty alt reach the audit.
-        const alt = window.prompt('대체 텍스트 (보이는 것을 설명하세요)', file.name) ?? '';
-        editor?.chain().focus().setImage({ src: result.url, alt }).run();
+        // 🔴 `window.prompt` 를 쓰지 않는다. 모달이 뜨는 동안 에디터 선택 영역이 풀리고,
+        //    모바일에서는 붙여넣기가 어렵다. 무엇보다 **기본값이 파일명(UUID)** 이었다 —
+        //    스크린리더가 그걸 읽으면 빈 alt 보다 나쁘다.
+        //    업로드는 이미 끝났고, 넣기 직전에 대체 텍스트를 인라인으로 받는다.
+        setPendingImage(result.url);
+        setAltDraft('');
       } catch (error) {
         setUploadError(error instanceof Error ? error.message : String(error));
       } finally {
@@ -82,6 +102,19 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
     },
     [editor, slug],
   );
+
+  /**
+   * 대체 텍스트를 확정하고 본문에 넣는다.
+   *
+   * 빈 값도 허용한다 — 장식용 이미지는 빈 alt 가 맞다. 다만 기본값으로 파일명을 넣지
+   * 않는다. 「무엇이든 채워져 있는 것」이 접근성이 아니다.
+   */
+  function insertPendingImage(): void {
+    if (!pendingImage) return;
+    editor?.chain().focus().setImage({ src: pendingImage, alt: altDraft.trim() }).run();
+    setPendingImage(null);
+    setAltDraft('');
+  }
 
   if (!editor) {
     return (
@@ -167,15 +200,57 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
         />
       </div>
 
+      {/* 대체 텍스트 입력. 이미지를 넣기 전에 한 번만 묻는다 (REQ-F-064 의 원칙을 본문에도 적용) */}
+      {pendingImage && (
+        <div className="flex flex-wrap items-end gap-2 border-x border-neutral-300 bg-neutral-50 px-3 py-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- Storage URL 미리보기다 */}
+          <img src={pendingImage} alt="" className="h-12 w-12 rounded border border-neutral-200 object-cover" />
+          <div className="min-w-[16rem] flex-1">
+            <label className="label" htmlFor="alt-draft">
+              대체 텍스트 — 보이는 것을 설명하세요
+            </label>
+            <input
+              id="alt-draft"
+              type="text"
+              autoFocus
+              value={altDraft}
+              onChange={(event) => setAltDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  insertPendingImage();
+                }
+              }}
+              placeholder="예) 관리자 화면의 글 목록"
+              className="field"
+            />
+          </div>
+          <button type="button" className="btn-primary" onClick={insertPendingImage}>
+            본문에 넣기
+          </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => {
+              setPendingImage(null);
+              setAltDraft('');
+            }}
+          >
+            취소
+          </button>
+        </div>
+      )}
+
       <EditorContent editor={editor} />
 
       {uploadError && (
         <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{uploadError}</p>
       )}
 
+      {/* 템플릿에서 넘어온 안내문에 이 프로젝트에 없는 도구 이름이 적혀 있었다. 사실만 남긴다 */}
       <p className="mt-2 text-xs text-neutral-500">
-        저장 형식은 마크다운입니다. 업로드한 이미지는 <code className="font-mono">user-upload</code> 로
-        기록됩니다 — 이미지 <strong>생성</strong>은 Codex imagegen 전용입니다.
+        저장 형식은 마크다운입니다. 올린 이미지는 Supabase Storage 에 보관되고, 본문 첫
+        이미지가 대표 이미지로 쓰입니다.
       </p>
     </div>
   );

@@ -10,6 +10,10 @@
 //    | 서버 액션의 `redirect()`     | 붙는다   |
 //    | `Link` · `router.push`       | 붙는다   |
 //    | `proxy.ts` (`nextUrl` 복제)  | 붙는다   |
+//    | 클라이언트 `fetch()`         | **안 붙는다** — 여기서만 손으로 붙인다 |
+//
+//    ⚠ `fetch('/api/upload')` 는 `/api/upload` 를 그대로 때려 404 HTML 을 받는다.
+//      JSON 파싱에서 「Unexpected token '<'」 로 터진다 (2026-08-27 실측 · Editor.tsx).
 //
 //    ⚠ 예외가 하나 있다. **JS 를 끈 폼 제출**(Next 의 서버 액션 progressive enhancement)
 //      경로에서는 붙지 않는다. 실측(2026-08-27) — `Next-Action` 헤더 없이 POST 하면
