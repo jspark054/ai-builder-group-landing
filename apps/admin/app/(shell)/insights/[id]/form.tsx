@@ -130,7 +130,7 @@ export function InsightForm({
             <Editor
               name="body"
               defaultValue={insight?.body ?? ''}
-              slug={insight?.slug ?? 'new'}
+              folder={insight?.id ?? 'new'}
               onChange={setBody}
             />
           </div>

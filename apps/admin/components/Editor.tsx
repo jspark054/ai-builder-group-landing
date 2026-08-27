@@ -20,7 +20,8 @@ import { BASE_PATH } from '@/lib/routes';
 interface EditorProps {
   name: string;
   defaultValue: string;
-  slug: string;
+  /** 업로드 경로에 쓸 폴더. 글 id 를 넘긴다 — 한글 슬러그는 Storage 키로 못 쓴다 */
+  folder: string;
   /**
    * 본문이 바뀔 때마다 마크다운을 넘긴다.
    *
@@ -30,7 +31,7 @@ interface EditorProps {
   onChange?: (markdown: string) => void;
 }
 
-export function Editor({ name, defaultValue, slug, onChange }: EditorProps) {
+export function Editor({ name, defaultValue, folder, onChange }: EditorProps) {
   const [markdown, setMarkdown] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -75,7 +76,7 @@ export function Editor({ name, defaultValue, slug, onChange }: EditorProps) {
       try {
         const body = new FormData();
         body.append('file', file);
-        body.append('slug', slug);
+        body.append('folder', folder);
 
         // 🔴 클라이언트 `fetch` 는 basePath 를 붙여 주지 않는다. `Link` 나 `redirect()` 와
         //    다르다 — 절대 경로로 두면 `/api/upload` 를 때려 404 HTML 이 돌아오고,
@@ -100,7 +101,7 @@ export function Editor({ name, defaultValue, slug, onChange }: EditorProps) {
         if (fileInputRef.current) fileInputRef.current.value = '';
       }
     },
-    [editor, slug],
+    [editor, folder],
   );
 
   /**
