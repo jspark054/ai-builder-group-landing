@@ -30,6 +30,7 @@ export const dynamic = 'force-dynamic';
  */
 const NAV = [
   { href: '/', label: '대시보드' },
+  { href: '/projects', label: '프로젝트' },
   { href: '/insights', label: '인사이트' },
 ];
 

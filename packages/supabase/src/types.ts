@@ -208,6 +208,21 @@ export type InsightRow = {
 };
 
 /**
+ * DB 가 스스로 채우는 컬럼. Insert 에서 생략할 수 있다.
+ *
+ * `id` 는 `gen_random_uuid()`, 두 시각은 `default now()` 와 `set_updated_at()` 트리거가
+ * 채운다 (마이그레이션 0001 · 0002). 이걸 필수로 두면 삽입할 때마다 앱이 시각을 만들어
+ * 넣게 되고, 그 값은 **DB 시계가 아니라 앱 서버 시계**다 — 두 시각이 갈라진다.
+ */
+type Generated = 'id' | 'created_at' | 'updated_at';
+
+type InsertOf<T extends { id: string; created_at: string; updated_at: string }> = Omit<
+  T,
+  Generated
+> &
+  Partial<Pick<T, Generated>>;
+
+/**
  * supabase-js checks this against its internal `GenericSchema`. Omitting
  * `Views` / `Functions` / `Enums` / `CompositeTypes` / `Relationships` makes
  * the constraint fail silently and every query result collapses to `never`,
@@ -224,47 +239,43 @@ export type Database = {
       };
       course: {
         Row: CourseRow;
-        Insert: Omit<CourseRow, 'id'> & { id?: string };
+        Insert: InsertOf<CourseRow>;
         Update: Partial<CourseRow>;
         Relationships: [];
       };
       builder: {
         Row: BuilderRow;
-        Insert: Omit<BuilderRow, 'id'> & { id?: string };
+        Insert: InsertOf<BuilderRow>;
         Update: Partial<BuilderRow>;
         Relationships: [];
       };
       project: {
         Row: ProjectRow;
-        Insert: Omit<ProjectRow, 'id'> & { id?: string };
+        Insert: InsertOf<ProjectRow>;
         Update: Partial<ProjectRow>;
         Relationships: [];
       };
       category: {
         Row: CategoryRow;
-        Insert: Omit<CategoryRow, 'id'> & { id?: string };
+        Insert: InsertOf<CategoryRow>;
         Update: Partial<CategoryRow>;
         Relationships: [];
       };
       project_builder: {
         Row: ProjectBuilderRow;
-        Insert: Omit<ProjectBuilderRow, 'id'> & { id?: string };
+        Insert: InsertOf<ProjectBuilderRow>;
         Update: Partial<ProjectBuilderRow>;
         Relationships: [];
       };
       project_category: {
         Row: ProjectCategoryRow;
-        Insert: Omit<ProjectCategoryRow, 'id'> & { id?: string };
+        Insert: InsertOf<ProjectCategoryRow>;
         Update: Partial<ProjectCategoryRow>;
         Relationships: [];
       };
       insight: {
         Row: InsightRow;
-        Insert: Omit<InsightRow, 'id' | 'created_at' | 'updated_at'> & {
-          id?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
+        Insert: InsertOf<InsightRow>;
         Update: Partial<InsightRow>;
         Relationships: [];
       };
