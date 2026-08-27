@@ -28,30 +28,43 @@ export const dynamic = 'force-dynamic';
  *   A-07(`/insights`) · A-06(`/my`) 은 그 화면을 만들 때 한 줄씩 추가한다.
  *   없는 주소를 미리 걸어 두면 메뉴가 404 로 가는 목록이 된다.
  */
-const NAV = [
+const ADMIN_NAV = [
   { href: '/', label: '대시보드' },
   { href: '/builders', label: '빌더' },
   { href: '/projects', label: '프로젝트' },
   { href: '/insights', label: '인사이트' },
 ];
 
+/**
+ * 빌더가 쓸 수 있는 화면은 A-06 하나다 (기능명세 §5.1 권한 표).
+ *
+ * 🔴 메뉴에서 감추는 것은 **차단이 아니다.** 주소를 직접 치면 `requireAdmin()` 이
+ *    `/my` 로 돌려보낸다. 그럼에도 감추는 이유는 다르다 — 누를 수 없는 메뉴가 보이면
+ *    화면이 「권한이 없다」가 아니라 「고장났다」로 읽힌다.
+ */
+const BUILDER_NAV = [{ href: '/my', label: '내 프로필' }];
+
 export default async function ShellLayout({ children }: { children: React.ReactNode }) {
   const viewer = await getViewer();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? '/';
 
+  const isBuilder = viewer?.role === 'builder';
+  const nav = isBuilder ? BUILDER_NAV : ADMIN_NAV;
+
   return (
     <div className="flex min-h-dvh">
       <nav
-        aria-label="관리 메뉴"
+        aria-label={isBuilder ? '빌더 메뉴' : '관리 메뉴'}
         className="flex w-[230px] shrink-0 flex-col border-r border-neutral-200 bg-white px-4 py-6"
       >
         <div className="px-3">
           <p className="text-base font-bold tracking-wide">AI 빌더그룹</p>
-          <p className="mt-0.5 text-xs text-neutral-400">Admin</p>
+          {/* 배지가 늘 'Admin' 이면 빌더로 들어와도 관리자 화면처럼 읽힌다 */}
+          <p className="mt-0.5 text-xs text-neutral-400">{isBuilder ? 'Builder' : 'Admin'}</p>
         </div>
 
         <ul className="mt-8 space-y-1">
-          {NAV.map((item) => (
+          {nav.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}

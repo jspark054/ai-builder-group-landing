@@ -98,3 +98,21 @@ export async function requireAdmin(): Promise<Viewer> {
   if (viewer.role !== 'admin') redirect('/my');
   return viewer;
 }
+
+/**
+ * 빌더 전용 화면(A-06)의 **페이지**가 부른다.
+ *
+ * 근거 — FN-A06-01(본인 레코드만) · FN-A06-09(타인 레코드 접근 불가) · REQ-N-011
+ *
+ * 관리자를 막는 게 아니라 자기 영역으로 돌려보낸다. 관리자에게는 `builder` 행이
+ * 없을 수 있고(운영팀은 빌더가 아니다), 있어도 전체를 보는 화면이 따로 있다.
+ *
+ * ⚠ `builderId` 가 null 인 빌더는 존재할 수 없다 — `getViewer()` 가 `builder` 행을
+ *   찾지 못하면 애초에 role 이 'builder' 가 되지 않는다. 그래도 타입을 좁혀 돌려준다.
+ */
+export async function requireBuilder(): Promise<Viewer & { builderId: string }> {
+  const viewer = await requireViewer();
+  if (viewer.role !== 'builder') redirect('/');
+  if (!viewer.builderId) redirect('/');
+  return { ...viewer, builderId: viewer.builderId };
+}
