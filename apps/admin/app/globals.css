@@ -20,8 +20,10 @@ body {
   @apply w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20;
 }
 
+/* 라벨은 한글이다. uppercase 는 아무 일도 하지 않고 tracking 만 남아 어색해지므로
+   둘 다 뺀다 (발주사 CMS 캡처도 자간 없는 작은 회색 라벨을 쓴다). */
 .label {
-  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500;
+  @apply mb-1.5 block text-xs font-medium text-neutral-500;
 }
 
 /* Tailwind 4 cannot `@apply` a class defined in this same file, so the

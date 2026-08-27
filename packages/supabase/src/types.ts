@@ -231,7 +231,17 @@ export type Database = {
       };
     };
     Views: Record<never, never>;
-    Functions: Record<never, never>;
+    /**
+     * 판정 함수 (마이그레이션 0002 §3 · 데이터모델 §4.1).
+     *
+     * `admin_user` 는 0004 에서 authenticated 롤에 **일부러 열지 않았다.**
+     * 두 함수가 security definer 라 함수 안에서만 그 테이블이 읽힌다 —
+     * 관리 화면의 역할 판정은 테이블 조회가 아니라 이 rpc 를 지나야 한다.
+     */
+    Functions: {
+      is_admin: { Args: Record<never, never>; Returns: boolean };
+      my_builder_id: { Args: Record<never, never>; Returns: string | null };
+    };
     Enums: Record<never, never>;
     CompositeTypes: Record<never, never>;
   };

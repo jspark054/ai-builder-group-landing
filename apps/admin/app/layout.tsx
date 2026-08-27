@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 import './globals.css';
 
@@ -10,27 +9,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * 루트 레이아웃에는 조판을 두지 않는다.
+ *
+ * 로그인(A-01)은 사이드바 없는 카드 한 장이고, 나머지 화면은 사이드바 셸을 쓴다.
+ * 여기에 헤더나 폭 제한을 두면 두 조판이 서로를 밀어낸다 — 셸은 `app/(shell)/layout.tsx`.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className="min-h-dvh">
-        <header className="border-b border-neutral-200 bg-white">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <Link href="/" className="font-semibold tracking-tight">
-              관리자
-            </Link>
-            <a
-              href="http://localhost:3000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-neutral-600 hover:text-neutral-900"
-            >
-              사이트 보기 ↗
-            </a>
-          </nav>
-        </header>
-        <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
-      </body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }
