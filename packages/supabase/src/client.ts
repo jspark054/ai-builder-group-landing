@@ -1,14 +1,26 @@
-import { createBrowserClient, createServerClient } from '@supabase/ssr';
+// 🔴 이 모듈은 **서버에서만** 동작합니다.
+//
+// `createAdminSupabase()` 가 `SUPABASE_SERVICE_ROLE_KEY` 를 읽습니다. 그 키는 RLS 를
+// 통째로 우회하므로 브라우저 번들에 한 번이라도 들어가면 **DB 전체가 열립니다.**
+//
+// `import 'server-only'` 는 클라이언트 컴포넌트가 이 모듈을 (타입이 아니라 값으로)
+// import 하는 순간 **빌드를 깨뜨립니다.** 런타임 사고가 되기 전에 빌드에서 잡힙니다.
+//
+// ⚠ 타입만 가져가는 것은 그대로 됩니다 — `import type { BuilderRow } from '@orca/supabase'`
+//   는 컴파일 시점에 지워져 런타임 import 가 남지 않습니다. 관리 화면의 폼 컴포넌트
+//   넷이 그 방식이고 영향을 받지 않습니다.
+//
+// ⚠ 그래서 **브라우저용 클라이언트를 여기 두지 않습니다.** 예전에 있던
+//   `createBrowserSupabase()` 를 걷어냈습니다 — 호출하는 곳이 한 군데도 없었고,
+//   이 저장소는 브라우저에서 Supabase 를 직접 부르지 않는 구조입니다(공개 화면은
+//   서버 컴포넌트, 관리 화면은 서버 액션). 필요해지면 별도 모듈로 되살립니다.
+import 'server-only';
+
+import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 
 import { requireConfig } from './config.ts';
 import type { Database } from './types.ts';
-
-/** 브라우저용 클라이언트. anon 키만 사용하므로 RLS 가 반드시 켜져 있어야 합니다. */
-export function createBrowserSupabase() {
-  const { url, anonKey } = requireConfig();
-  return createBrowserClient<Database>(url, anonKey);
-}
 
 export interface CookieAdapter {
   getAll(): { name: string; value: string }[];

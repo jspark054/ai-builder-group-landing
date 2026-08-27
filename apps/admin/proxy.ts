@@ -74,5 +74,9 @@ export const config = {
   //    실측(2026-08-27) — 이 항목이 없을 때 `GET /admin` 에서 프록시가 아예 실행되지 않았고,
   //    화면이 `requireAdmin()` 을 부른 덕에 우연히 막혔다. 페이지가 판정을 빠뜨리면
   //    그대로 열리는 구멍이다. 게이트는 페이지의 성실함에 기대면 안 된다.
-  matcher: ['/', '/((?!_next/static|_next/image|favicon.ico).*)'],
+  //
+  // ⚠ `robots.txt` 는 **일부러 열어 둔다.** 게이트에 걸리면 크롤러가 받는 것은
+  //   차단 규칙이 아니라 로그인 화면으로 가는 307 이고, 그러면 `robots.ts` 를 둔
+  //   의미가 없다 (실측 08-27). 내용이 `Disallow: /` 뿐이라 열려도 새는 정보가 없다.
+  matcher: ['/', '/((?!_next/static|_next/image|favicon.ico|robots.txt).*)'],
 };
