@@ -81,3 +81,75 @@
  * bg-surface-raised text-ink border-border rounded-card
  * bg-brand text-ink-inverse rounded-pill
  */
+
+/* ── P-13 인사이트 본문 (FN-P13-01) ────────────────────────────────────
+ *
+ * 본문은 마크다운에서 온 HTML 이라 클래스를 붙일 수 없다. 태그 선택자로 조판한다.
+ * 값은 전부 토큰이다 — 여기서 색·크기를 하드코딩하지 않는다 (하드 룰 1).
+ *
+ * h1 은 없다. 페이지 제목이 h1 이고, 본문 h1 은 sanitize 가 h2 로 내린다
+ * (lib/markdown.ts). 그래서 h2 부터 정의한다.
+ */
+.insight-body > * + * {
+  margin-top: var(--space-5);
+}
+.insight-body h2 {
+  margin-top: var(--space-8);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+}
+.insight-body h3 {
+  margin-top: var(--space-6);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+}
+.insight-body h4 {
+  margin-top: var(--space-5);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+.insight-body p,
+.insight-body li {
+  font-size: var(--font-size-md);
+  line-height: var(--leading-relaxed);
+}
+.insight-body ul {
+  list-style: disc;
+  padding-left: var(--space-5);
+}
+.insight-body ol {
+  list-style: decimal;
+  padding-left: var(--space-5);
+}
+.insight-body li + li {
+  margin-top: var(--space-2);
+}
+.insight-body blockquote {
+  border-left: 2px solid var(--color-border);
+  padding-left: var(--space-4);
+  color: var(--color-muted);
+}
+.insight-body a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.insight-body a:hover {
+  color: var(--color-brand);
+}
+.insight-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-card);
+}
+.insight-body hr {
+  border-top: 1px solid var(--color-border);
+}
+.insight-body pre {
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-soft);
+  padding: var(--space-4);
+}

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next';
 
-import { projectUrl } from '@/lib/jsonld';
+import { insightUrl, projectUrl } from '@/lib/jsonld';
 import { getPublicBuilderSlugs } from '@/lib/queries/builder-detail';
+import { getPublicInsightSlugs } from '@/lib/queries/insights';
 import { getPublicProjectSlugs } from '@/lib/queries/project-detail';
 import { absoluteUrl, siteUrl } from '@/lib/site';
 
@@ -9,7 +10,7 @@ import { absoluteUrl, siteUrl } from '@/lib/site';
  * 공개 화면 사이트맵.
  *
  * 정적 경로 + **P-04 `/portfolio/{slug}` · P-06 `/builders/{slug}` 공개분**을 싣는다.
- * 남은 상세 화면(P-13 `/insights/{slug}`)은 그 화면을 만들 때 같은 방식으로 추가한다.
+ * P-13 `/insights/{slug}` 와 카테고리 3종도 함께 싣는다 (08-27 추가).
  *
  * 비공개 프로젝트·빌더는 쿼리가 이미 걸러 준다 — 화면설계 §5.3 「비공개·없는
  * 슬러그는 404 반환. **sitemap 제외**」가 여기 걸리는 조항이고, P-06 은 담당
@@ -56,5 +57,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...projectEntries, ...builderEntries];
+  // P-13 발행분 + 카테고리 3종. 공개 조건(published & published_at)은 쿼리가 이미 건다.
+  // 카테고리 경로는 글이 0건이어도 남는다 — 빈 상태 문구를 렌더하는 화면이라 색인 대상이다
+  const insightEntries: MetadataRoute.Sitemap = (await getPublicInsightSlugs()).map((slug) => ({
+    url: insightUrl(slug),
+    lastModified,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }));
+
+  const categoryEntries: MetadataRoute.Sitemap = ['before', 'process', 'people'].map((category) => ({
+    url: absoluteUrl(`/insights/${category}`),
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...projectEntries, ...builderEntries, ...insightEntries, ...categoryEntries];
 }
